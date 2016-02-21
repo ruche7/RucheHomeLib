@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\ConfigKeeper.cs" />
     <Compile Include="Util\TextElementEnumerable.cs" />
+    <Compile Include="Windows\Mvvm\Converters\BooleanInverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\EnumValueDisplayConverter.cs" />
     <Compile Include="Windows\WinApi\Win32Window.cs" />
   </ItemGroup>
