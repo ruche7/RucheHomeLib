@@ -121,7 +121,7 @@ namespace RucheHome.Util
         /// シリアライザを生成する。
         /// </summary>
         /// <returns>シリアライザ。</returns>
-        protected XmlObjectSerializer MakeSerializer()
+        protected virtual XmlObjectSerializer MakeSerializer()
         {
             return new DataContractJsonSerializer(typeof(T));
         }
