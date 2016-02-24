@@ -14,19 +14,38 @@ namespace RucheHome.Util
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="directoryName">
-        /// 設定保存先ディレクトリ名。基準位置からの相対パス。
+        /// <param name="subDirectoryName">
+        /// 設定保存先サブディレクトリ名。基準ディレクトリからの相対パス。
         /// 全体で設定を共有するならば空文字列または null 。
         /// </param>
-        public ConfigKeeper(string directoryName)
+        /// <param name="baseDirectoryPath">
+        /// 基準ディレクトリパス。既定値を用いるならば空文字列または null 。
+        /// </param>
+        /// <param name="serializer">
+        /// シリアライザ。既定のシリアライザを用いるならば null 。
+        /// </param>
+        public ConfigKeeper(
+            string subDirectoryName = null,
+            string baseDirectoryPath = null,
+            XmlObjectSerializer serializer = null)
         {
             this.Value = default(T);
 
+            this.BaseDirectoryPath =
+                !string.IsNullOrEmpty(baseDirectoryPath) ?
+                    baseDirectoryPath :
+                    Path.Combine(
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData),
+                        @"ruche-home");
+
             var fileName = typeof(T).FullName + @".config";
-            this.RelativeFilePath =
-                string.IsNullOrEmpty(directoryName) ?
-                    fileName :
-                    Path.Combine(directoryName, fileName);
+            var filePath =
+                string.IsNullOrEmpty(subDirectoryName) ?
+                    fileName : Path.Combine(subDirectoryName, fileName);
+            this.FilePath = Path.Combine(this.BaseDirectoryPath, filePath);
+
+            this.Serializer = serializer ?? (new DataContractJsonSerializer(typeof(T)));
         }
 
         /// <summary>
@@ -37,8 +56,17 @@ namespace RucheHome.Util
         /// <summary>
         /// 設定ファイルパスを取得する。
         /// </summary>
-        public string FilePath =>
-            Path.Combine(this.BaseDirectoryPath, this.RelativeFilePath);
+        public string FilePath { get; }
+
+        /// <summary>
+        /// シリアライザを取得する。
+        /// </summary>
+        public XmlObjectSerializer Serializer { get; }
+
+        /// <summary>
+        /// ベースディレクトリパスを取得する。
+        /// </summary>
+        public string BaseDirectoryPath { get; }
 
         /// <summary>
         /// 設定を読み取る。
@@ -46,10 +74,8 @@ namespace RucheHome.Util
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
         public bool Load()
         {
-            var filePath = this.FilePath;
-
             // ファイルがなければ読み取れない
-            if (!File.Exists(filePath))
+            if (!File.Exists(this.FilePath))
             {
                 return false;
             }
@@ -57,10 +83,9 @@ namespace RucheHome.Util
             try
             {
                 // 読み取り
-                using (var stream = File.OpenRead(filePath))
+                using (var stream = File.OpenRead(this.FilePath))
                 {
-                    var serializer = this.MakeSerializer();
-                    var value = serializer.ReadObject(stream);
+                    var value = this.Serializer.ReadObject(stream);
                     if (!(value is T))
                     {
                         return false;
@@ -82,22 +107,19 @@ namespace RucheHome.Util
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
         public bool Save()
         {
-            var filePath = this.FilePath;
-
             try
             {
                 // 親ディレクトリ作成
-                var dirPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
+                var dirPath = Path.GetDirectoryName(Path.GetFullPath(this.FilePath));
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);
                 }
 
                 // 書き出し
-                using (var stream = File.Create(filePath))
+                using (var stream = File.Create(this.FilePath))
                 {
-                    var serializer = this.MakeSerializer();
-                    serializer.WriteObject(stream, this.Value);
+                    this.Serializer.WriteObject(stream, this.Value);
                 }
             }
             catch
@@ -107,28 +129,5 @@ namespace RucheHome.Util
 
             return true;
         }
-
-        /// <summary>
-        /// ベースディレクトリパスを取得する。
-        /// </summary>
-        protected virtual string BaseDirectoryPath { get; } =
-            Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.LocalApplicationData),
-                @"ruche-home");
-
-        /// <summary>
-        /// シリアライザを生成する。
-        /// </summary>
-        /// <returns>シリアライザ。</returns>
-        protected virtual XmlObjectSerializer MakeSerializer()
-        {
-            return new DataContractJsonSerializer(typeof(T));
-        }
-
-        /// <summary>
-        /// ベースディレクトリからの相対ファイルパスを取得または設定する。
-        /// </summary>
-        private string RelativeFilePath { get; }
     }
 }
