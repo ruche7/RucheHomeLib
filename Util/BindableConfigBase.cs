@@ -7,15 +7,19 @@ using System.Runtime.Serialization;
 namespace RucheHome.Util
 {
     /// <summary>
-    /// ConfigKeeper{T} ジェネリッククラスで扱う設定の抽象基底クラス。
+    /// ConfigKeeper{T} ジェネリッククラスで扱われる、
+    /// プロパティ変更通知付き設定の抽象基底クラス。
     /// </summary>
     [DataContract(Namespace = "")]
-    public abstract class ConfigBase : INotifyPropertyChanged, IExtensibleDataObject
+    public abstract class BindableConfigBase
+        :
+        INotifyPropertyChanged,
+        IExtensibleDataObject
     {
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        protected ConfigBase()
+        protected BindableConfigBase()
         {
         }
 
