@@ -7,7 +7,7 @@ using System.Windows.Markup;
 // これらの属性値を変更してください。
 [assembly: AssemblyTitle("RucheHomeLib")]
 [assembly: AssemblyDescription(
-    "The common library for ruche's .NET tools. (.NET Framework 4.0 or later)")]
+    "The common library for ruche's .NET tools. (.NET Framework 4.5 or later)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ruche-home")]
 [assembly: AssemblyProduct("RucheHomeLib")]
