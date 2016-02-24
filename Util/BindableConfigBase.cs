@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -46,6 +48,49 @@ namespace RucheHome.Util
                         this,
                         new PropertyChangedEventArgs(propertyName));
                 }
+            }
+        }
+
+        /// <summary>
+        /// DataMemberAttribute 属性の付与されたプロパティおよびフィールドを、
+        /// 既定のコンストラクタを呼び出した直後の値で上書きする。
+        /// </summary>
+        /// <remarks>
+        /// 既定のコンストラクタが存在しない場合は例外が送出される。
+        /// </remarks>
+        protected void ResetDataMembers()
+        {
+            var type = this.GetType();
+            var src = Activator.CreateInstance(type, true);
+
+            // プロパティ上書き
+            var propInfos =
+                type
+                    .GetProperties(
+                        BindingFlags.Instance |
+                        BindingFlags.Public |
+                        BindingFlags.NonPublic)
+                    .Where(
+                        i =>
+                            i.IsDefined(typeof(DataMemberAttribute)) &&
+                            i.CanRead &&
+                            i.CanWrite);
+            foreach (var pi in propInfos)
+            {
+                pi.SetValue(this, pi.GetValue(src));
+            }
+
+            // フィールド上書き
+            var fieldInfos =
+                type
+                    .GetFields(
+                        BindingFlags.Instance |
+                        BindingFlags.Public |
+                        BindingFlags.NonPublic)
+                    .Where(i => i.IsDefined(typeof(DataMemberAttribute)));
+            foreach (var fi in fieldInfos)
+            {
+                fi.SetValue(this, fi.GetValue(src));
             }
         }
 
