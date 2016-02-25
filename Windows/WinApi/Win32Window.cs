@@ -203,7 +203,7 @@ namespace RucheHome.Windows.WinApi
         /// <returns>子孫ウィンドウリスト。取得できなければ null 。</returns>
         public Task<List<Win32Window>> FindDescendantsAsync(string className = null)
         {
-            return Task.Factory.StartNew(() => this.FindDescendants(className));
+            return Task.Run(() => this.FindDescendants(className));
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace RucheHome.Windows.WinApi
         /// <returns>ウィンドウテキスト。取得できなかった場合は null 。</returns>
         public Task<string> GetTextAsync(int timeoutMilliseconds = -1)
         {
-            return Task.Factory.StartNew(() => this.GetText(timeoutMilliseconds));
+            return Task.Run(() => this.GetText(timeoutMilliseconds));
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace RucheHome.Windows.WinApi
         /// <returns>成功した場合は true 。そうでなければ false 。</returns>
         public Task<bool> SetTextAsync(string text, int timeoutMilliseconds = -1)
         {
-            return Task.Factory.StartNew(() => this.SetText(text, timeoutMilliseconds));
+            return Task.Run(() => this.SetText(text, timeoutMilliseconds));
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace RucheHome.Windows.WinApi
             int timeoutMilliseconds = -1)
         {
             return
-                Task.Factory.StartNew(
+                Task.Run(
                     () => this.SendMessage(message, wparam, lparam, timeoutMilliseconds));
         }
 
