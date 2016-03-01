@@ -5,12 +5,12 @@ using System.Runtime.CompilerServices;
 namespace RucheHome.Util
 {
     /// <summary>
-    /// スレッドID、呼び出し元情報付きのトレース出力を行う静的クラス。
+    /// 時刻、スレッドID、呼び出し元情報付きのトレース出力を行う静的クラス。
     /// </summary>
     public static class ThreadTrace
     {
         /// <summary>
-        /// スレッドID、呼び出し元情報を付けてテキストと改行をトレース出力する。
+        /// 時刻、スレッドID、呼び出し元情報を付けてテキストと改行をトレース出力する。
         /// </summary>
         /// <param name="text">テキスト。不要ならば null 。</param>
         /// <param name="member">
@@ -33,7 +33,7 @@ namespace RucheHome.Util
         }
 
         /// <summary>
-        /// スレッドID、呼び出し元情報を付けて値と改行をトレース出力する。
+        /// 時刻、スレッドID、呼び出し元情報を付けて値と改行をトレース出力する。
         /// </summary>
         /// <param name="value">値。</param>
         /// <param name="member">

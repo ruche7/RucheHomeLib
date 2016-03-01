@@ -8,12 +8,12 @@ using System.Threading;
 namespace RucheHome.Util
 {
     /// <summary>
-    /// スレッドID、呼び出し元情報付きのデバッグ出力を行う静的クラス。
+    /// 時刻、スレッドID、呼び出し元情報付きのデバッグ出力を行う静的クラス。
     /// </summary>
     public static class ThreadDebug
     {
         /// <summary>
-        /// スレッドID、呼び出し元情報を付けてテキストと改行をデバッグ出力する。
+        /// 時刻、スレッドID、呼び出し元情報を付けてテキストと改行をデバッグ出力する。
         /// </summary>
         /// <param name="text">テキスト。不要ならば null 。</param>
         /// <param name="member">
@@ -36,7 +36,7 @@ namespace RucheHome.Util
         }
 
         /// <summary>
-        /// スレッドID、呼び出し元情報を付けて値と改行をデバッグ出力する。
+        /// 時刻、スレッドID、呼び出し元情報を付けて値と改行をデバッグ出力する。
         /// </summary>
         /// <param name="value">値。</param>
         /// <param name="member">
@@ -74,7 +74,9 @@ namespace RucheHome.Util
         {
             var msg = new StringBuilder();
 
-            msg.Append(@"[TID:");
+            msg.Append('[');
+            msg.Append(DateTime.Now.ToString("hhmmss"));
+            msg.Append(@"][TID:");
             msg.Append(Thread.CurrentThread.ManagedThreadId);
             msg.Append(']');
 
