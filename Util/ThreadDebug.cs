@@ -1,44 +1,89 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace RucheHome.Util
 {
     /// <summary>
-    /// スレッドID付きのデバッグ出力を行う静的クラス。
+    /// スレッドID、呼び出し元情報付きのデバッグ出力を行う静的クラス。
     /// </summary>
     public static class ThreadDebug
     {
         /// <summary>
-        /// メッセージと改行をデバッグ出力する。
+        /// スレッドID、呼び出し元情報を付けてメッセージと改行をデバッグ出力する。
         /// </summary>
         /// <param name="message">メッセージ。</param>
+        /// <param name="member">
+        /// 呼び出し元メンバ名。 CallerMemberNameAttribute により自動設定される。
+        /// </param>
+        /// <param name="file">
+        /// 呼び出し元ファイル名。 CallerFilePathAttribute により自動設定される。
+        /// </param>
+        /// <param name="line">
+        /// 呼び出し元行番号。 CallerLineNumberAttribute により自動設定される。
+        /// </param>
         [Conditional("DEBUG")]
-        public static void WriteLine(string message)
+        public static void WriteLine(
+            string message,
+            [CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0)
         {
-            var tid = @"[TID:" + Thread.CurrentThread.ManagedThreadId + @"] ";
-            Debug.WriteLine(tid + message);
+            var tid = @"[TID:" + Thread.CurrentThread.ManagedThreadId + @"]";
+            var caller = @"[" + member + @"@" + file + @":" + line + @"]";
+
+            var msg = message ?? "";
+            if (msg != "")
+            {
+                msg = " " + msg + " ";
+            }
+
+            Debug.WriteLine(tid + msg + caller);
         }
 
         /// <summary>
-        /// 値と改行をデバッグ出力する。
+        /// スレッドID、呼び出し元情報を付けて値と改行をデバッグ出力する。
         /// </summary>
         /// <param name="value">値。</param>
+        /// <param name="member">
+        /// 呼び出し元メンバ名。 CallerMemberNameAttribute により自動設定される。
+        /// </param>
+        /// <param name="file">
+        /// 呼び出し元ファイル名。 CallerFilePathAttribute により自動設定される。
+        /// </param>
+        /// <param name="line">
+        /// 呼び出し元行番号。 CallerLineNumberAttribute により自動設定される。
+        /// </param>
         [Conditional("DEBUG")]
-        public static void WriteLine(object value)
+        public static void WriteLine(
+            object value,
+            [CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0)
         {
-            WriteLine(value?.ToString() ?? @"(null)");
+            WriteLine(value?.ToString() ?? @"(null)", member, file, line);
         }
 
         /// <summary>
-        /// フォーマット文字列と改行をデバッグ出力する。
+        /// スレッドID、呼び出し元情報と改行をデバッグ出力する。
         /// </summary>
-        /// <param name="format">フォーマット。</param>
-        /// <param name="args">パラメータ配列。</param>
+        /// <param name="member">
+        /// 呼び出し元メンバ名。 CallerMemberNameAttribute により自動設定される。
+        /// </param>
+        /// <param name="file">
+        /// 呼び出し元ファイル名。 CallerFilePathAttribute により自動設定される。
+        /// </param>
+        /// <param name="line">
+        /// 呼び出し元行番号。 CallerLineNumberAttribute により自動設定される。
+        /// </param>
         [Conditional("DEBUG")]
-        public static void WriteLine(string format, params object[] args)
+        public static void WriteLine(
+            [CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0)
         {
-            WriteLine(string.Format(format, args));
+            WriteLine("", member, file, line);
         }
     }
 }
