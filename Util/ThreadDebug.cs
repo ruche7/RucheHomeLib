@@ -25,7 +25,7 @@ namespace RucheHome.Util
         /// </param>
         [Conditional("DEBUG")]
         public static void WriteLine(
-            string message,
+            string message = "",
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
@@ -63,27 +63,6 @@ namespace RucheHome.Util
             [CallerLineNumber] int line = 0)
         {
             WriteLine(value?.ToString() ?? @"(null)", member, file, line);
-        }
-
-        /// <summary>
-        /// スレッドID、呼び出し元情報と改行をデバッグ出力する。
-        /// </summary>
-        /// <param name="member">
-        /// 呼び出し元メンバ名。 CallerMemberNameAttribute により自動設定される。
-        /// </param>
-        /// <param name="file">
-        /// 呼び出し元ファイル名。 CallerFilePathAttribute により自動設定される。
-        /// </param>
-        /// <param name="line">
-        /// 呼び出し元行番号。 CallerLineNumberAttribute により自動設定される。
-        /// </param>
-        [Conditional("DEBUG")]
-        public static void WriteLine(
-            [CallerMemberName] string member = "",
-            [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0)
-        {
-            WriteLine("", member, file, line);
         }
     }
 }
