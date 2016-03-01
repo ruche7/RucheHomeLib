@@ -75,7 +75,7 @@ namespace RucheHome.Util
             var msg = new StringBuilder();
 
             msg.Append('[');
-            msg.Append(DateTime.Now.ToString("hhmmss"));
+            msg.Append(DateTime.Now.ToString("hh:mm:ss"));
             msg.Append(@"][TID:");
             msg.Append(Thread.CurrentThread.ManagedThreadId);
             msg.Append(']');
