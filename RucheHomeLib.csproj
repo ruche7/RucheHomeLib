@@ -57,6 +57,7 @@
     <Compile Include="Util\BindableConfigBase.cs" />
     <Compile Include="Util\ConfigKeeper.cs" />
     <Compile Include="Util\TextElementEnumerable.cs" />
+    <Compile Include="Util\ThreadDebug.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\DragDropCommandBehavior.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanInverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\EnumValueDisplayConverter.cs" />
