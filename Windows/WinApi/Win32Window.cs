@@ -104,6 +104,15 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
+        /// ウィンドウをアクティブにして現在の位置とサイズで表示する。
+        /// </summary>
+        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
+        public bool Show()
+        {
+            return ShowWindow(this.Handle, SW_SHOW);
+        }
+
+        /// <summary>
         /// 指定した階層だけ上の親ウィンドウを取得する。
         /// </summary>
         /// <param name="count">階層数。既定値は 1 。</param>
@@ -220,7 +229,7 @@ namespace RucheHome.Windows.WinApi
             string className = null,
             string text = null)
         {
-            for (IntPtr child = IntPtr.Zero; ; )
+            for (IntPtr child = IntPtr.Zero; ;)
             {
                 child = FindWindowEx(this.Handle, child, className, text);
                 if (child == IntPtr.Zero)
@@ -466,6 +475,7 @@ namespace RucheHome.Windows.WinApi
         private const uint GA_PARENT = 1;
         private const int SW_MAXIMIZED = 3;
         private const int SW_SHOWNOACTIVATE = 4;
+        private const int SW_SHOW = 5;
         private const int SW_SHOWMINNOACTIVE = 7;
         private const uint SMTO_NORMAL = 0;
 
