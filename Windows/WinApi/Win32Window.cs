@@ -104,12 +104,48 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
-        /// ウィンドウをアクティブにして現在の位置とサイズで表示する。
+        /// ウィンドウが最小化や最大化されている場合は元のサイズに戻す。
         /// </summary>
         /// <returns>成功した場合は true 。そうでなければ false 。</returns>
-        public bool Show()
+        /// <remarks>
+        /// 最大化状態から最小化したウィンドウの場合は最大化状態に戻る。
+        /// </remarks>
+        public bool Restore()
         {
-            return ShowWindow(this.Handle, SW_SHOW);
+            return ShowWindow(this.Handle, SW_RESTORE);
+        }
+
+        /// <summary>
+        /// ウィンドウをアクティブにする。
+        /// </summary>
+        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
+        public bool Activate()
+        {
+            return
+                SetWindowPos(this.Handle, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        }
+
+        /// <summary>
+        /// Zオーダーを指定したウィンドウの次にする。
+        /// </summary>
+        /// <param name="windowInsertAfter">基準ウィンドウ。</param>
+        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
+        public bool MoveZOrderAfter(Win32Window windowInsertAfter)
+        {
+            if (windowInsertAfter == null)
+            {
+                throw new ArgumentNullException(nameof(windowInsertAfter));
+            }
+
+            return
+                SetWindowPos(
+                    this.Handle,
+                    windowInsertAfter.Handle,
+                    0,
+                    0,
+                    0,
+                    0,
+                    SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
 
         /// <summary>
@@ -121,7 +157,7 @@ namespace RucheHome.Windows.WinApi
         {
             if (count <= 0)
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             var handle = this.Handle;
@@ -148,7 +184,7 @@ namespace RucheHome.Windows.WinApi
         {
             if (count <= 0)
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             var handle = this.Handle;
@@ -475,9 +511,14 @@ namespace RucheHome.Windows.WinApi
         private const uint GA_PARENT = 1;
         private const int SW_MAXIMIZED = 3;
         private const int SW_SHOWNOACTIVATE = 4;
-        private const int SW_SHOW = 5;
         private const int SW_SHOWMINNOACTIVE = 7;
+        private const int SW_RESTORE = 9;
+        private const uint SWP_NOSIZE = 0x01;
+        private const uint SWP_NOMOVE = 0x02;
+        private const uint SWP_NOACTIVATE = 0x10;
         private const uint SMTO_NORMAL = 0;
+
+        private static readonly IntPtr HWND_TOP = IntPtr.Zero;
 
         [return: MarshalAs(UnmanagedType.Bool)]
         private delegate bool EnumWindowProc(IntPtr windowHandle, IntPtr lparam);
@@ -529,6 +570,17 @@ namespace RucheHome.Windows.WinApi
         [DllImport("user32.dll", ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ShowWindow(IntPtr windowHandle, int command);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetWindowPos(
+            IntPtr windowHandle,
+            IntPtr windowHandleInsertAfter,
+            int x,
+            int y,
+            int cx,
+            int cy,
+            uint flags);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SendMessage(
