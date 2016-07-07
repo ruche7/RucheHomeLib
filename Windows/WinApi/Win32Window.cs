@@ -104,6 +104,18 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
+        /// ウィンドウが最前面表示されているか否かを取得する。
+        /// </summary>
+        public bool IsTopmost
+        {
+            get
+            {
+                var style = GetWindowLong(this.Handle, GWL_EXSTYLE).ToInt64();
+                return ((style & WS_EX_TOPMOST) != 0);
+            }
+        }
+
+        /// <summary>
         /// ウィンドウが最小化や最大化されている場合は元のサイズに戻す。
         /// </summary>
         /// <returns>成功した場合は true 。そうでなければ false 。</returns>
@@ -122,7 +134,14 @@ namespace RucheHome.Windows.WinApi
         public bool Activate()
         {
             return
-                SetWindowPos(this.Handle, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+                SetWindowPos(
+                    this.Handle,
+                    HWND_TOP,
+                    0,
+                    0,
+                    0,
+                    0,
+                    SWP_NOSIZE | SWP_NOMOVE);
         }
 
         /// <summary>
@@ -130,6 +149,9 @@ namespace RucheHome.Windows.WinApi
         /// </summary>
         /// <param name="windowInsertAfter">基準ウィンドウ。</param>
         /// <returns>成功した場合は true 。そうでなければ false 。</returns>
+        /// <remarks>
+        /// 基準ウィンドウに合わせて最前面表示状態も変化する。
+        /// </remarks>
         public bool MoveZOrderAfter(Win32Window windowInsertAfter)
         {
             if (windowInsertAfter == null)
@@ -509,6 +531,8 @@ namespace RucheHome.Windows.WinApi
 
         private const uint GW_OWNER = 4;
         private const uint GA_PARENT = 1;
+        private const int GWL_EXSTYLE = -20;
+        private const uint WS_EX_TOPMOST = 8;
         private const int SW_MAXIMIZED = 3;
         private const int SW_SHOWNOACTIVATE = 4;
         private const int SW_SHOWMINNOACTIVE = 7;
@@ -542,6 +566,20 @@ namespace RucheHome.Windows.WinApi
 
         [DllImport("user32.dll", ExactSpelling = true)]
         private static extern IntPtr GetAncestor(IntPtr windowHandle, uint flags);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong", CharSet = CharSet.Auto)]
+        private static extern IntPtr GetWindowLong32(IntPtr windowHandle, int index);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Auto)]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr windowHandle, int index);
+
+        private static IntPtr GetWindowLong(IntPtr windowHandle, int index)
+        {
+            return
+                (IntPtr.Size == 4) ?
+                    GetWindowLong32(windowHandle, index) :
+                    GetWindowLongPtr64(windowHandle, index);
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetClassName(
