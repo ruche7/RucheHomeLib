@@ -171,6 +171,24 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
+        /// ウィンドウが非アクティブの場合にタスクバーボタンを点滅させる。
+        /// もしくは点滅を止める。
+        /// </summary>
+        /// <param name="on">点滅させるならば true 。消灯させるならば false 。</param>
+        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
+        public bool FlashTray(bool on = true)
+        {
+            var info = new FLASHWINFO();
+            info.StructSize = (uint)Marshal.SizeOf(info);
+            info.WindowHandle = this.Handle;
+            info.Flags = on ? (FLASHW_TRAY | FLASHW_TIMERNOFG) : FLASHW_STOP;
+            info.Count = on ? uint.MaxValue : 0;
+            info.Timeout = 0;
+
+            return FlashWindowEx(ref info);
+        }
+
+        /// <summary>
         /// 指定した階層だけ上の親ウィンドウを取得する。
         /// </summary>
         /// <param name="count">階層数。既定値は 1 。</param>
@@ -540,9 +558,22 @@ namespace RucheHome.Windows.WinApi
         private const uint SWP_NOSIZE = 0x01;
         private const uint SWP_NOMOVE = 0x02;
         private const uint SWP_NOACTIVATE = 0x10;
+        private const uint FLASHW_STOP = 0;
+        private const uint FLASHW_TRAY = 0x02;
+        private const uint FLASHW_TIMERNOFG = 0x0C;
         private const uint SMTO_NORMAL = 0;
 
         private static readonly IntPtr HWND_TOP = IntPtr.Zero;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct FLASHWINFO
+        {
+            public uint StructSize;
+            public IntPtr WindowHandle;
+            public uint Flags;
+            public uint Count;
+            public uint Timeout;
+        };
 
         [return: MarshalAs(UnmanagedType.Bool)]
         private delegate bool EnumWindowProc(IntPtr windowHandle, IntPtr lparam);
@@ -619,6 +650,10 @@ namespace RucheHome.Windows.WinApi
             int cx,
             int cy,
             uint flags);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FlashWindowEx(ref FLASHWINFO info);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SendMessage(
