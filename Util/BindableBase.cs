@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace RucheHome.Util
 {
     /// <summary>
     /// プロパティ変更通知をサポートするクラスの抽象基底クラス。
     /// </summary>
+    [DataContract(Namespace = "")]
     public abstract class BindableBase : INotifyPropertyChanged
     {
         /// <summary>
