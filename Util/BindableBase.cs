@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace RucheHome.Util
 {
@@ -18,6 +19,15 @@ namespace RucheHome.Util
         protected BindableBase()
         {
         }
+
+        /// <summary>
+        /// 複数スレッドからプロパティを更新する際の
+        /// PropertyChanged イベント通知に用いる同期コンテキストを取得または設定する。
+        /// </summary>
+        /// <remarks>
+        /// 複数スレッドから操作することがない場合、設定する必要はない。
+        /// </remarks>
+        public SynchronizationContext SynchronizationContext { get; set; } = null;
 
         /// <summary>
         /// プロパティ値を設定し、変更をイベント通知する。
@@ -48,7 +58,23 @@ namespace RucheHome.Util
         /// </param>
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Action invoker =
+                () =>
+                    this.PropertyChanged?.Invoke(
+                        this,
+                        new PropertyChangedEventArgs(propertyName));
+
+            var context = this.SynchronizationContext;
+            if (context == null || context == SynchronizationContext.Current)
+            {
+                // 同期不要 or 同一スレッド なのでそのまま実行
+                invoker();
+            }
+            else
+            {
+                // 同期コンテキストへポスト
+                context.Post(_ => invoker(), null);
+            }
         }
 
         #region INotifyPropertyChanged の実装
