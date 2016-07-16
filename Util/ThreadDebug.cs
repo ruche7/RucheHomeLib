@@ -75,25 +75,22 @@ namespace RucheHome.Util
             var msg = new StringBuilder();
 
             msg.Append('[');
-            msg.Append(DateTime.Now.ToString("HH:mm:ss"));
+            msg.Append(DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss"));
             msg.Append(@"][TID:");
             msg.Append(Thread.CurrentThread.ManagedThreadId);
-            msg.Append(']');
-
-            if (text != null)
-            {
-                msg.Append(' ');
-                msg.Append(text);
-                msg.Append(' ');
-            }
-
-            msg.Append('[');
+            msg.Append(@"][");
             msg.Append(member);
             msg.Append('@');
             msg.Append(Path.GetFileName(file));
             msg.Append(':');
             msg.Append(line);
             msg.Append(']');
+
+            if (text != null)
+            {
+                msg.Append('#');
+                msg.Append(text);
+            }
 
             return msg.ToString();
         }
