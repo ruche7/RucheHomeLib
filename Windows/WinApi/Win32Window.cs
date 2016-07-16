@@ -43,10 +43,12 @@ namespace RucheHome.Windows.WinApi
                 if (this.className == null)
                 {
                     var name = new StringBuilder(256);
-                    if (GetClassName(this.Handle, name, name.Capacity) > 0)
+                    var len = GetClassName(this.Handle, name, name.Capacity);
+                    if (len <= 0)
                     {
-                        this.className = name.ToString();
+                        ThrowLastErrorException();
                     }
+                    this.className = name.ToString(0, len);
                 }
 
                 return this.className;
@@ -118,22 +120,20 @@ namespace RucheHome.Windows.WinApi
         /// <summary>
         /// ウィンドウが最小化や最大化されている場合は元のサイズに戻す。
         /// </summary>
-        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
         /// <remarks>
         /// 最大化状態から最小化したウィンドウの場合は最大化状態に戻る。
         /// </remarks>
-        public bool Restore()
+        public void Restore()
         {
-            return ShowWindow(this.Handle, SW_RESTORE);
+            ShowWindow(this.Handle, SW_RESTORE);
         }
 
         /// <summary>
         /// ウィンドウをアクティブにする。
         /// </summary>
-        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
-        public bool Activate()
+        public void Activate()
         {
-            return
+            bool result =
                 SetWindowPos(
                     this.Handle,
                     HWND_TOP,
@@ -142,24 +142,27 @@ namespace RucheHome.Windows.WinApi
                     0,
                     0,
                     SWP_NOSIZE | SWP_NOMOVE);
+            if (!result)
+            {
+                ThrowLastErrorException();
+            }
         }
 
         /// <summary>
         /// Zオーダーを指定したウィンドウの次にする。
         /// </summary>
         /// <param name="windowInsertAfter">基準ウィンドウ。</param>
-        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
         /// <remarks>
         /// 基準ウィンドウに合わせて最前面表示状態も変化する。
         /// </remarks>
-        public bool MoveZOrderAfter(Win32Window windowInsertAfter)
+        public void MoveZOrderAfter(Win32Window windowInsertAfter)
         {
             if (windowInsertAfter == null)
             {
                 throw new ArgumentNullException(nameof(windowInsertAfter));
             }
 
-            return
+            bool result =
                 SetWindowPos(
                     this.Handle,
                     windowInsertAfter.Handle,
@@ -168,6 +171,10 @@ namespace RucheHome.Windows.WinApi
                     0,
                     0,
                     SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+            if (!result)
+            {
+                ThrowLastErrorException();
+            }
         }
 
         /// <summary>
@@ -175,8 +182,7 @@ namespace RucheHome.Windows.WinApi
         /// もしくは点滅を止める。
         /// </summary>
         /// <param name="on">点滅させるならば true 。消灯させるならば false 。</param>
-        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
-        public bool FlashTray(bool on = true)
+        public void FlashTray(bool on = true)
         {
             var info = new FLASHWINFO();
             info.StructSize = (uint)Marshal.SizeOf(info);
@@ -185,7 +191,7 @@ namespace RucheHome.Windows.WinApi
             info.Count = on ? uint.MaxValue : 0;
             info.Timeout = 0;
 
-            return FlashWindowEx(ref info);
+            FlashWindowEx(ref info);
         }
 
         /// <summary>
@@ -449,13 +455,23 @@ namespace RucheHome.Windows.WinApi
         /// <param name="message">ウィンドウメッセージ。</param>
         /// <param name="wparam">パラメータ1。</param>
         /// <param name="lparam">パラメータ2。</param>
-        /// <returns>送信できたならば true 。そうでなければ false 。</returns>
-        public bool PostMessage(
+        public void PostMessage(
             uint message,
             IntPtr wparam = default(IntPtr),
             IntPtr lparam = default(IntPtr))
         {
-            return PostMessage(this.Handle, message, wparam, lparam);
+            if (!PostMessage(this.Handle, message, wparam, lparam))
+            {
+                ThrowLastErrorException();
+            }
+        }
+
+        /// <summary>
+        /// 直近の Win32 エラー値を基に例外を送出する。
+        /// </summary>
+        private static void ThrowLastErrorException()
+        {
+            Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
         }
 
         /// <summary>
@@ -534,6 +550,10 @@ namespace RucheHome.Windows.WinApi
                         out result);
                 if (r == IntPtr.Zero)
                 {
+                    if (Marshal.GetLastWin32Error() != 0)
+                    {
+                        ThrowLastErrorException();
+                    }
                     return null;
                 }
             }
@@ -595,13 +615,21 @@ namespace RucheHome.Windows.WinApi
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         private static extern IntPtr GetWindow(IntPtr windowHandle, uint flags);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         private static extern IntPtr GetAncestor(IntPtr windowHandle, uint flags);
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowLong", CharSet = CharSet.Auto)]
+        [DllImport(
+            "user32.dll",
+            EntryPoint = "GetWindowLong",
+            CharSet = CharSet.Auto,
+            SetLastError = true)]
         private static extern IntPtr GetWindowLong32(IntPtr windowHandle, int index);
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Auto)]
+        [DllImport(
+            "user32.dll",
+            EntryPoint = "GetWindowLongPtr",
+            CharSet = CharSet.Auto,
+            SetLastError = true)]
         private static extern IntPtr GetWindowLongPtr64(IntPtr windowHandle, int index);
 
         private static IntPtr GetWindowLong(IntPtr windowHandle, int index)
@@ -618,7 +646,7 @@ namespace RucheHome.Windows.WinApi
             [Out] StringBuilder name,
             int nameSize);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsWindowEnabled(IntPtr windowHandle);
 
@@ -628,15 +656,15 @@ namespace RucheHome.Windows.WinApi
             IntPtr windowHandle,
             [MarshalAs(UnmanagedType.Bool)] bool enable);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsIconic(IntPtr windowHandle);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool IsZoomed(IntPtr windowHandle);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ShowWindow(IntPtr windowHandle, int command);
 
@@ -651,7 +679,7 @@ namespace RucheHome.Windows.WinApi
             int cy,
             uint flags);
 
-        [DllImport("user32.dll", ExactSpelling = true)]
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool FlashWindowEx(ref FLASHWINFO info);
 
