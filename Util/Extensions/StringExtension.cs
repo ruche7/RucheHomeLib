@@ -14,9 +14,11 @@ namespace RucheHome.Util.Extensions
         /// 文字列列挙による文字列の置換処理を行う。
         /// </summary>
         /// <param name="self">置換対象文字列。</param>
-        /// <param name="oldValues">置換元文字列列挙。</param>
+        /// <param name="oldValues">
+        /// 置換元文字列列挙。 null や空文字列を含んでいてはならない。
+        /// </param>
         /// <param name="newValues">
-        /// 置換先文字列列挙。要素数 1 以上でなければならない。
+        /// 置換先文字列列挙。 null を含んでいてはならない。
         /// </param>
         /// <returns>置換された文字列。</returns>
         /// <remarks>
@@ -34,10 +36,10 @@ namespace RucheHome.Util.Extensions
             IEnumerable<string> oldValues,
             IEnumerable<string> newValues)
         {
-            // 置換処理用アイテム列挙作成
+            // 置換処理用アイテムリスト作成
             // 引数の正当性チェックも行われる
             var items = MakeReplaceItems(self, oldValues, newValues);
-            if (!items.Any())
+            if (items.Count <= 0)
             {
                 return self;
             }
@@ -61,10 +63,10 @@ namespace RucheHome.Util.Extensions
                     break;
                 }
 
-                // 置換処理用アイテム列挙更新
-                items = UpdateReplaceItems(items, self, selfPos);
+                // 置換処理用アイテムリスト更新
+                UpdateReplaceItems(items, self, selfPos);
             }
-            while (items.Any());
+            while (items.Count > 0);
 
             // 末尾までの文字列を追加
             if (selfPos < self.Length)
@@ -76,9 +78,9 @@ namespace RucheHome.Util.Extensions
         }
 
         /// <summary>
-        /// 置換処理用アイテム構造体。
+        /// 置換処理用アイテムクラス。
         /// </summary>
-        private struct ReplaceItem : IComparable<ReplaceItem>
+        private class ReplaceItem : IComparable<ReplaceItem>
         {
             /// <summary>
             /// コンストラクタ。
@@ -161,15 +163,17 @@ namespace RucheHome.Util.Extensions
         }
 
         /// <summary>
-        /// 置換処理用アイテム列挙を作成する。
+        /// 置換処理用アイテムリストを作成する。
         /// </summary>
         /// <param name="self">置換対象文字列。</param>
-        /// <param name="oldValues">置換元文字列列挙。</param>
-        /// <param name="newValues">
-        /// 置換先文字列列挙。要素数 1 以上でなければならない。
+        /// <param name="oldValues">
+        /// 置換元文字列列挙。 null や空文字列を含んでいてはならない。
         /// </param>
-        /// <returns>置換処理用アイテム列挙。</returns>
-        private static IEnumerable<ReplaceItem> MakeReplaceItems(
+        /// <param name="newValues">
+        /// 置換先文字列列挙。 null を含んでいてはならない。
+        /// </param>
+        /// <returns>置換処理用アイテムリスト。</returns>
+        private static List<ReplaceItem> MakeReplaceItems(
             string self,
             IEnumerable<string> oldValues,
             IEnumerable<string> newValues)
@@ -180,13 +184,13 @@ namespace RucheHome.Util.Extensions
             ValidateArgumentNull(newValues, nameof(newValues));
 
             var newVals = newValues.ToArray();
-            if (newVals.Length <= 0)
+            if (newVals.Length <= 0 && oldValues.Any())
             {
                 throw new ArgumentException(
                     @"置換先文字列列挙の要素数が 0 です。",
                     nameof(newValues));
             }
-            if (newVals.Any(v => v == null))
+            if (newVals.Contains(null))
             {
                 throw new ArgumentException(
                     @"置換先文字列列挙内に null が含まれています。",
@@ -211,37 +215,42 @@ namespace RucheHome.Util.Extensions
                                     nameof(oldValues));
                             }
 
-                            var newVal = newVals[Math.Min(i, newVals.Length - 1)];
-                            return new ReplaceItem(i, v, newVal, self.IndexOf(v));
+                            var searchResult = self.IndexOf(v);
+                            return
+                                (searchResult < 0) ?
+                                    null :
+                                    new ReplaceItem(
+                                        i,
+                                        v,
+                                        newVals[Math.Min(i, newVals.Length - 1)],
+                                        searchResult);
                         })
-                    .Where(item => item.SearchResult >= 0);
+                    .Where(item => item != null)
+                    .ToList();
         }
 
         /// <summary>
-        /// 置換処理用アイテム列挙を更新する。
+        /// 置換処理用アイテムリストを更新する。
         /// </summary>
-        /// <param name="items">置換処理用アイテム列挙。</param>
+        /// <param name="items">置換処理用アイテムリスト。</param>
         /// <param name="self">置換対象文字列。</param>
         /// <param name="searchResultMin">置換元文字列の検索開始位置。</param>
-        /// <returns>更新された置換処理用アイテム列挙。</returns>
-        private static IEnumerable<ReplaceItem> UpdateReplaceItems(
-            IEnumerable<ReplaceItem> items,
+        private static void UpdateReplaceItems(
+            List<ReplaceItem> items,
             string self,
             int searchResultMin)
         {
-            return
-                items
-                    .Select(
-                        item =>
-                        {
-                            if (item.SearchResult < searchResultMin)
-                            {
-                                item.SearchResult =
-                                    self.IndexOf(item.OldValue, searchResultMin);
-                            }
-                            return item;
-                        })
-                    .Where(item => item.SearchResult >= 0);
+            // 検索結果値更新
+            foreach (var item in items)
+            {
+                if (item.SearchResult < searchResultMin)
+                {
+                    item.SearchResult = self.IndexOf(item.OldValue, searchResultMin);
+                }
+            }
+
+            // 文字列が見つからない要素をリストから削除
+            items.RemoveAll(item => item.SearchResult < 0);
         }
     }
 }
