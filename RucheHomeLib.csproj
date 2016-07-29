@@ -57,7 +57,7 @@
     <Compile Include="Util\BindableBase.cs" />
     <Compile Include="Util\BindableConfigBase.cs" />
     <Compile Include="Util\ConfigKeeper.cs" />
-    <Compile Include="Util\Extensions\StringExtension.cs" />
+    <Compile Include="Util\Extensions\String\StringExtension.cs" />
     <Compile Include="Util\TextElementEnumerable.cs" />
     <Compile Include="Util\ThreadDebug.cs" />
     <Compile Include="Util\ThreadTrace.cs" />
@@ -66,7 +66,9 @@
     <Compile Include="Windows\Mvvm\Converters\EnumValueDisplayConverter.cs" />
     <Compile Include="Windows\WinApi\Win32Window.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Util\Extensions\String\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

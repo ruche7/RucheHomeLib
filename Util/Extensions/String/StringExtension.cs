@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RucheHome.Util.Extensions
+namespace RucheHome.Util.Extensions.String
 {
     /// <summary>
     /// string 型に対する拡張メソッドを提供する静的クラス。
@@ -50,7 +50,8 @@ namespace RucheHome.Util.Extensions
             do
             {
                 // 最も優先度の高いアイテムを取得
-                var item = items.Min();
+                // 優先度の高い順にソートされているため先頭取得でOK
+                var item = items[0];
 
                 // 対象アイテムまでの文字列と対象アイテムの置換先文字列を追加
                 dest.Append(self.Substring(selfPos, item.SearchResult - selfPos));
@@ -136,13 +137,13 @@ namespace RucheHome.Util.Extensions
             {
                 if (this.SearchResult != other.SearchResult)
                 {
-                    return (this.SearchResult - other.SearchResult);
+                    return this.SearchResult.CompareTo(other.SearchResult);
                 }
                 if (this.OldValue.Length != other.OldValue.Length)
                 {
                     return (other.OldValue.Length - this.OldValue.Length);
                 }
-                return (this.ItemIndex - other.ItemIndex);
+                return this.ItemIndex.CompareTo(other.ItemIndex);
             }
         }
 
@@ -158,7 +159,8 @@ namespace RucheHome.Util.Extensions
             {
                 throw
                     (argName == null) ?
-                        new ArgumentNullException() : new ArgumentNullException(argName);
+                        new ArgumentNullException() :
+                        new ArgumentNullException(argName);
             }
         }
 
@@ -172,7 +174,9 @@ namespace RucheHome.Util.Extensions
         /// <param name="newValues">
         /// 置換先文字列列挙。 null を含んでいてはならない。
         /// </param>
-        /// <returns>置換処理用アイテムリスト。</returns>
+        /// <returns>
+        /// 置換処理用アイテムリスト。優先度の高い順にソートされている。
+        /// </returns>
         private static List<ReplaceItem> MakeReplaceItems(
             string self,
             IEnumerable<string> oldValues,
@@ -184,20 +188,26 @@ namespace RucheHome.Util.Extensions
             ValidateArgumentNull(newValues, nameof(newValues));
 
             var newVals = newValues.ToArray();
-            if (newVals.Length <= 0 && oldValues.Any())
-            {
-                throw new ArgumentException(
-                    @"置換先文字列列挙の要素数が 0 です。",
-                    nameof(newValues));
-            }
             if (newVals.Contains(null))
             {
                 throw new ArgumentException(
                     @"置換先文字列列挙内に null が含まれています。",
                     nameof(newValues));
             }
+            if (!oldValues.Any())
+            {
+                // 置換元が1つもないなら置換不要なので空リストを返す
+                return new List<ReplaceItem>();
+            }
+            if (newVals.Length <= 0)
+            {
+                throw new ArgumentException(
+                    @"置換先文字列列挙の要素数が 0 です。",
+                    nameof(newValues));
+            }
 
-            return
+            // アイテムリスト作成
+            var items =
                 oldValues
                     .Select(
                         (v, i) =>
@@ -227,6 +237,11 @@ namespace RucheHome.Util.Extensions
                         })
                     .Where(item => item != null)
                     .ToList();
+
+            // ソートする
+            items.Sort();
+
+            return items;
         }
 
         /// <summary>
@@ -240,17 +255,40 @@ namespace RucheHome.Util.Extensions
             string self,
             int searchResultMin)
         {
-            // 検索結果値更新
-            foreach (var item in items)
+            // 更新したアイテム数設定先
+            int updatedCount = 0;
+
+            // アイテム更新
+            // 優先度の関係上 SearchResult が小さい順に並んでいる
+            while (
+                updatedCount < items.Count &&
+                items[updatedCount].SearchResult < searchResultMin)
             {
-                if (item.SearchResult < searchResultMin)
+                var item = items[updatedCount];
+                item.SearchResult = self.IndexOf(item.OldValue, searchResultMin);
+                ++updatedCount;
+            }
+
+            // 更新したアイテムを新しい位置に挿入
+            for (int ii = 0; ii < updatedCount; ++ii)
+            {
+                var item = items[ii];
+
+                // 有効なアイテムのみ挿入する
+                if (item.SearchResult >= 0)
                 {
-                    item.SearchResult = self.IndexOf(item.OldValue, searchResultMin);
+                    var pos =
+                        items.BinarySearch(
+                            updatedCount,
+                            items.Count - updatedCount,
+                            item,
+                            null);
+                    items.Insert((pos < 0) ? ~pos : pos, item);
                 }
             }
 
-            // 文字列が見つからない要素をリストから削除
-            items.RemoveAll(item => item.SearchResult < 0);
+            // 挿入し終えた古いアイテムを削除
+            items.RemoveRange(0, updatedCount);
         }
     }
 }

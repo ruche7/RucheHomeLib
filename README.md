@@ -5,4 +5,4 @@
 
 * ターゲットは .NET Framework 4.5 。
 * XAMLは含めない。
-* 外部ライブラリは含めない。
+* 外部ライブラリは含めない。(System.Windows.Interactivity.dll を除く)
