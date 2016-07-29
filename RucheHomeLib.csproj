@@ -57,6 +57,7 @@
     <Compile Include="Util\BindableBase.cs" />
     <Compile Include="Util\BindableConfigBase.cs" />
     <Compile Include="Util\ConfigKeeper.cs" />
+    <Compile Include="Util\Extensions\StringExtension.cs" />
     <Compile Include="Util\TextElementEnumerable.cs" />
     <Compile Include="Util\ThreadDebug.cs" />
     <Compile Include="Util\ThreadTrace.cs" />
