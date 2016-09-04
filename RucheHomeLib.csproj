@@ -64,6 +64,7 @@
     <Compile Include="Util\ThreadTrace.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\DragDropCommandBehavior.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanInverter.cs" />
+    <Compile Include="Windows\Mvvm\Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\EnumValueDisplayConverter.cs" />
     <Compile Include="Windows\WinApi\Win32Window.cs" />
   </ItemGroup>
