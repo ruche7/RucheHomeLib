@@ -25,21 +25,11 @@ namespace RucheHome.Windows.Mvvm.Commands
         #region ICommand の実装
 
         /// <summary>
-        /// コマンドの実行可能状態が変化した時に呼び出されるイベント。
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        /// <summary>
         /// コマンドを実行可能であるか否かを取得する。
         /// </summary>
         /// <param name="parameter">コマンドパラメータ。</param>
-        /// <returns>実行可能ならば true 。そうでなければ false 。</returns>
-        public bool CanExecute(object parameter) =>
-            !string.IsNullOrWhiteSpace(parameter as string);
+        /// <returns>常に true 。</returns>
+        public bool CanExecute(object parameter) => true;
 
         /// <summary>
         /// コマンド処理を行う。
@@ -53,7 +43,21 @@ namespace RucheHome.Windows.Mvvm.Commands
                 return;
             }
 
-            Process.Start(cmd);
+            try
+            {
+                Process.Start(cmd);
+            }
+            catch { }
+        }
+
+        #endregion
+
+        #region ICommand の明示的実装
+
+        event EventHandler ICommand.CanExecuteChanged
+        {
+            add { }
+            remove { }
         }
 
         #endregion
