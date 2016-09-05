@@ -56,16 +56,16 @@ namespace RucheHome.Net
                     nameof(app));
             }
 
-            var versionAttr = app.GetCustomAttribute<AssemblyVersionAttribute>();
-            if (versionAttr == null)
+            var version = app.GetName()?.Version;
+            if (version == null)
             {
                 throw new ArgumentException(
-                    nameof(AssemblyVersionAttribute) + @" is not defined.",
+                    @"The version of application is not defined.",
                     nameof(app));
             }
 
             this.Product = productAttr.Product;
-            this.CurrentVersion = new Version(versionAttr.Version);
+            this.CurrentVersion = version;
         }
 
         /// <summary>
