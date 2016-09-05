@@ -43,4 +43,7 @@ using System.Windows.Markup;
     @"RucheHome.Windows.Mvvm.Behaviors")]
 [assembly: XmlnsDefinition(
     @"http://schemas.ruche-home.net/xaml/windows/mvvm",
+    @"RucheHome.Windows.Mvvm.Commands")]
+[assembly: XmlnsDefinition(
+    @"http://schemas.ruche-home.net/xaml/windows/mvvm",
     @"RucheHome.Windows.Mvvm.Converters")]
