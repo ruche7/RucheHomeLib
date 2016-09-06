@@ -14,6 +14,13 @@ namespace RucheHome.Windows.Mvvm.Behaviors
     public class DragDropCommandBehavior : Behavior<UIElement>
     {
         /// <summary>
+        /// コンストラクタ。
+        /// </summary>
+        public DragDropCommandBehavior() : base()
+        {
+        }
+
+        /// <summary>
         /// DragEnterCommand 依存関係プロパティ。
         /// </summary>
         public static readonly DependencyProperty DragEnterCommandProperty =

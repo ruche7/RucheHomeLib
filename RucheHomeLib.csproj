@@ -65,6 +65,8 @@
     <Compile Include="Util\ThreadDebug.cs" />
     <Compile Include="Util\ThreadTrace.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\DragDropCommandBehavior.cs" />
+    <Compile Include="Windows\Mvvm\Behaviors\FrameworkElementBehavior.cs" />
+    <Compile Include="Windows\Mvvm\Behaviors\ListBoxAutoScrollBehavior.cs" />
     <Compile Include="Windows\Mvvm\Commands\ProcessStartCommand.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanInverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanVisibilityConverter.cs" />
