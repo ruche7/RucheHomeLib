@@ -227,7 +227,7 @@ namespace RucheHome.Net
         /// アプリ更新情報JSONファイルのベースURI。
         /// </summary>
         private static readonly string JsonBaseUri =
-            @"http://www.ruche-home.net/files/versions/";
+            @"https://ruche-home.net/files/versions/";
 
         /// <summary>
         /// Webクライアントを取得する。
