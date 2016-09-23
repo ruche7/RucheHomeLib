@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 
@@ -44,16 +45,10 @@ namespace RucheHome.Windows.Mvvm.Converters
                     return DependencyProperty.UnsetValue;
                 }
 
-                // DisplayAttribute 属性を取得
-                var attrs =
-                    info.GetCustomAttributes(typeof(DisplayAttribute), false)
-                        as DisplayAttribute[];
-                if (attrs == null || attrs.Length <= 0)
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
-                return attrs[0].GetName() ?? DependencyProperty.UnsetValue;
+                // DisplayAttribute 属性から表示文字列を取得
+                return
+                    info.GetCustomAttribute<DisplayAttribute>(false)?.GetName() ??
+                    DependencyProperty.UnsetValue;
             }
             catch { }
 
