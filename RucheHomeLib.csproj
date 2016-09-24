@@ -64,6 +64,7 @@
     <Compile Include="Util\TextElementEnumerable.cs" />
     <Compile Include="Util\ThreadDebug.cs" />
     <Compile Include="Util\ThreadTrace.cs" />
+    <Compile Include="Windows\Media\FontFamilyNameEnumerable.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\DragDropCommandBehavior.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\FrameworkElementBehavior.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\ListBoxAutoScrollBehavior.cs" />
