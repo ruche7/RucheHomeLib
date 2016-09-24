@@ -6,7 +6,7 @@ using System.Text;
 namespace RucheHome.Util.Extensions.String
 {
     /// <summary>
-    /// string 型に対する拡張メソッドを提供する静的クラス。
+    /// String クラスおよび StringBuilder クラスに対する拡張メソッドを提供する静的クラス。
     /// </summary>
     public static class StringExtension
     {
@@ -15,10 +15,17 @@ namespace RucheHome.Util.Extensions.String
         /// </summary>
         /// <param name="self">対象文字列。</param>
         /// <param name="startIndex">削除開始位置。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
         /// <returns>部分文字列を削除した文字列。</returns>
-        public static string RemoveSurrogateSafe(this string self, int startIndex)
+        public static string RemoveSurrogateSafe(
+            this string self,
+            int startIndex,
+            bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex);
+            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
             return self.Remove(startIndex);
         }
 
@@ -28,13 +35,18 @@ namespace RucheHome.Util.Extensions.String
         /// <param name="self">対象文字列。</param>
         /// <param name="startIndex">削除開始位置。</param>
         /// <param name="count">削除文字数。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
         /// <returns>部分文字列を削除した文字列。</returns>
         public static string RemoveSurrogateSafe(
             this string self,
             int startIndex,
-            int count)
+            int count,
+            bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref count);
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref count, moveAfter);
             return self.Remove(startIndex, count);
         }
 
@@ -43,10 +55,17 @@ namespace RucheHome.Util.Extensions.String
         /// </summary>
         /// <param name="self">対象文字列。</param>
         /// <param name="startIndex">取得開始位置。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
         /// <returns>取得した部分文字列。</returns>
-        public static string SubstringSurrogateSafe(this string self, int startIndex)
+        public static string SubstringSurrogateSafe(
+            this string self,
+            int startIndex,
+            bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex);
+            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
             return self.Substring(startIndex);
         }
 
@@ -56,14 +75,109 @@ namespace RucheHome.Util.Extensions.String
         /// <param name="self">対象文字列。</param>
         /// <param name="startIndex">取得開始位置。</param>
         /// <param name="count">取得文字数。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
         /// <returns>取得した部分文字列。</returns>
         public static string SubstringSurrogateSafe(
             this string self,
             int startIndex,
-            int count)
+            int count,
+            bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref count);
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref count, moveAfter);
             return self.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を削除する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">削除開始位置。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
+        /// <returns>部分文字列を削除した文字列。</returns>
+        public static StringBuilder RemoveSurrogateSafe(
+            this StringBuilder self,
+            int startIndex,
+            bool moveAfter = false)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+
+            var length =
+                (self == null || startIndex < 0 || startIndex > self.Length) ?
+                    0 : (self.Length - startIndex);
+
+            return self.Remove(startIndex, length);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を削除する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">削除開始位置。</param>
+        /// <param name="length">削除文字数。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
+        /// <returns>部分文字列を削除した文字列。</returns>
+        public static StringBuilder RemoveSurrogateSafe(
+            this StringBuilder self,
+            int startIndex,
+            int length,
+            bool moveAfter = false)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref length, moveAfter);
+            return self.Remove(startIndex, length);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を取得する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">取得開始位置。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
+        /// <returns>取得した部分文字列。</returns>
+        public static string ToStringSurrogateSafe(
+            this StringBuilder self,
+            int startIndex,
+            bool moveAfter = false)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+
+            var length =
+                (self == null || startIndex < 0 || startIndex > self.Length) ?
+                    0 : (self.Length - startIndex);
+
+            return self.ToString(startIndex, length);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を取得する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">取得開始位置。</param>
+        /// <param name="length">取得文字数。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
+        /// <returns>取得した部分文字列。</returns>
+        public static string ToStringSurrogateSafe(
+            this StringBuilder self,
+            int startIndex,
+            int length,
+            bool moveAfter = false)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref length, moveAfter);
+            return self.ToString(startIndex, length);
         }
 
         /// <summary>
@@ -71,16 +185,23 @@ namespace RucheHome.Util.Extensions.String
         /// </summary>
         /// <param name="self">処理対象の文字列。</param>
         /// <param name="startIndex">補正対象の開始位置値。</param>
-        private static void CorrectRangeSurrogateSafe(string self, ref int startIndex)
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
+        private static void CorrectRangeSurrogateSafe(
+            dynamic self,
+            ref int startIndex,
+            bool moveAfter)
         {
             if (
                 self != null &&
                 startIndex > 0 &&
-                self.Length > startIndex &&
+                startIndex < self.Length &&
                 char.IsLowSurrogate(self[startIndex]))
             {
-                // 開始位置が下位サロゲートなら範囲から除外
-                ++startIndex;
+                // 開始位置が下位サロゲートなら範囲を移動
+                startIndex += moveAfter ? +1 : -1;
             }
         }
 
@@ -90,10 +211,15 @@ namespace RucheHome.Util.Extensions.String
         /// <param name="self">処理対象の文字列。</param>
         /// <param name="startIndex">補正対象の開始位置値。</param>
         /// <param name="count">補正対象の文字数値。</param>
+        /// <param name="moveAfter">
+        /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
+        /// 既定では前方にずらす。
+        /// </param>
         private static void CorrectRangeSurrogateSafe(
-            string self,
+            dynamic self,
             ref int startIndex,
-            ref int count)
+            ref int count,
+            bool moveAfter)
         {
             if (
                 self != null &&
@@ -103,24 +229,27 @@ namespace RucheHome.Util.Extensions.String
             {
                 if (
                     startIndex > 0 &&
-                    self.Length > startIndex &&
+                    startIndex < self.Length &&
                     char.IsLowSurrogate(self[startIndex]))
                 {
-                    // 開始位置が下位サロゲートなら範囲から除外
-                    ++startIndex;
+                    // 開始位置が下位サロゲートなら範囲を移動
+                    startIndex += moveAfter ? +1 : -1;
 
                     // ++startIndex により終端位置が範囲外になるなら補正
-                    if (startIndex + count > self.Length)
+                    if (moveAfter && startIndex + count > self.Length)
                     {
                         --count;
                     }
                 }
 
-                var end = startIndex + count;
-                if (self.Length > end && char.IsLowSurrogate(self[end]))
+                if (count > 0)
                 {
-                    // 終端位置が下位サロゲートなら範囲に含める
-                    ++count;
+                    var end = startIndex + count;
+                    if (end < self.Length && char.IsLowSurrogate(self[end]))
+                    {
+                        // 終端位置が下位サロゲートなら範囲を移動
+                        count += moveAfter ? +1 : -1;
+                    }
                 }
             }
         }
