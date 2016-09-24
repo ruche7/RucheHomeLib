@@ -11,6 +11,121 @@ namespace RucheHome.Util.Extensions.String
     public static class StringExtension
     {
         /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を削除する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">削除開始位置。</param>
+        /// <returns>部分文字列を削除した文字列。</returns>
+        public static string RemoveSurrogateSafe(this string self, int startIndex)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex);
+            return self.Remove(startIndex);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を削除する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">削除開始位置。</param>
+        /// <param name="count">削除文字数。</param>
+        /// <returns>部分文字列を削除した文字列。</returns>
+        public static string RemoveSurrogateSafe(
+            this string self,
+            int startIndex,
+            int count)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref count);
+            return self.Remove(startIndex, count);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を取得する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">取得開始位置。</param>
+        /// <returns>取得した部分文字列。</returns>
+        public static string SubstringSurrogateSafe(this string self, int startIndex)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex);
+            return self.Substring(startIndex);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように部分文字列を取得する。
+        /// </summary>
+        /// <param name="self">対象文字列。</param>
+        /// <param name="startIndex">取得開始位置。</param>
+        /// <param name="count">取得文字数。</param>
+        /// <returns>取得した部分文字列。</returns>
+        public static string SubstringSurrogateSafe(
+            this string self,
+            int startIndex,
+            int count)
+        {
+            CorrectRangeSurrogateSafe(self, ref startIndex, ref count);
+            return self.Substring(startIndex, count);
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように範囲指定値を補正する。
+        /// </summary>
+        /// <param name="self">処理対象の文字列。</param>
+        /// <param name="startIndex">補正対象の開始位置値。</param>
+        private static void CorrectRangeSurrogateSafe(string self, ref int startIndex)
+        {
+            if (
+                self != null &&
+                startIndex > 0 &&
+                self.Length > startIndex &&
+                char.IsLowSurrogate(self[startIndex]))
+            {
+                // 開始位置が下位サロゲートなら範囲から除外
+                ++startIndex;
+            }
+        }
+
+        /// <summary>
+        /// サロゲートペアを分断しないように範囲指定値を補正する。
+        /// </summary>
+        /// <param name="self">処理対象の文字列。</param>
+        /// <param name="startIndex">補正対象の開始位置値。</param>
+        /// <param name="count">補正対象の文字数値。</param>
+        private static void CorrectRangeSurrogateSafe(
+            string self,
+            ref int startIndex,
+            ref int count)
+        {
+            if (
+                self != null &&
+                startIndex >= 0 &&
+                count >= 0 &&
+                startIndex + count <= self.Length)
+            {
+                if (
+                    startIndex > 0 &&
+                    self.Length > startIndex &&
+                    char.IsLowSurrogate(self[startIndex]))
+                {
+                    // 開始位置が下位サロゲートなら範囲から除外
+                    ++startIndex;
+
+                    // ++startIndex により終端位置が範囲外になるなら補正
+                    if (startIndex + count > self.Length)
+                    {
+                        --count;
+                    }
+                }
+
+                var end = startIndex + count;
+                if (self.Length > end && char.IsLowSurrogate(self[end]))
+                {
+                    // 終端位置が下位サロゲートなら範囲に含める
+                    ++count;
+                }
+            }
+        }
+
+        /// <summary>
         /// 文字列列挙による文字列の置換処理を行う。
         /// </summary>
         /// <param name="self">置換対象文字列。</param>
