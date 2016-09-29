@@ -111,7 +111,7 @@ namespace RucheHome.Util
             msg.Append(Thread.CurrentThread.ManagedThreadId);
             msg.Append(@"][");
             msg.Append(member);
-            msg.Append('@');
+            msg.Append(';');
             msg.Append(Path.GetFileName(file));
             msg.Append(':');
             msg.Append(line);
@@ -119,7 +119,7 @@ namespace RucheHome.Util
 
             if (text != null)
             {
-                msg.Append('#');
+                msg.Append('>');
                 msg.Append(text);
             }
 
