@@ -80,48 +80,6 @@ namespace RucheHome.Util
         }
 
         /// <summary>
-        /// BindableCollection{TItem} 派生型プロパティ値を設定し、
-        /// PropertyChanged イベントの伝搬設定を行い、変更をイベント通知する。
-        /// </summary>
-        /// <typeparam name="TItem">プロパティ値の要素型。明示する必要がある。</typeparam>
-        /// <typeparam name="T">
-        /// プロパティ値の型。 BindableCollection{TItem} 派生型であること。
-        /// </typeparam>
-        /// <param name="field">設定先フィールド。</param>
-        /// <param name="value">設定値。</param>
-        /// <param name="propertyName">
-        /// プロパティ名。 CallerMemberNameAttribute により自動設定される。
-        /// </param>
-        protected void SetBindableCollectionPropertyWithEventChain<TItem, T>(
-            ref T field,
-            T value,
-            [CallerMemberName] string propertyName = null)
-            where T : BindableCollection<TItem>
-            where TItem : INotifyPropertyChanged
-        {
-            if (!EqualityComparer<T>.Default.Equals(field, value))
-            {
-                if (field != null)
-                {
-                    field.ItemPropertyChanged -=
-                        this.GetPropertyChangedChainDelegate(propertyName);
-                    this.RemoveCollectionChangedChain(ref field, propertyName);
-                }
-
-                field = value;
-
-                if (field != null)
-                {
-                    this.AddCollectionChangedChain(ref field, propertyName);
-                    field.ItemPropertyChanged +=
-                        this.GetPropertyChangedChainDelegate(propertyName);
-                }
-
-                this.RaisePropertyChanged(propertyName);
-            }
-        }
-
-        /// <summary>
         /// INotifyPropertyChanged インタフェース実装型プロパティの変更通知を
         /// このオブジェクトの PropertyChanged イベントに伝搬させるように設定する。
         /// </summary>
@@ -208,6 +166,52 @@ namespace RucheHome.Util
         {
             if (field != null)
             {
+                field.CollectionChanged -=
+                    this.GetCollectionChangedChainDelegate(propertyName);
+            }
+        }
+
+        /// <summary>
+        /// BindableCollection{TItem} 派生クラスプロパティの各種変更通知を
+        /// このオブジェクトの PropertyChanged イベントに伝搬させるように設定する。
+        /// </summary>
+        /// <typeparam name="TItem">プロパティ値の要素型。</typeparam>
+        /// <param name="field">設定解除先フィールド。</param>
+        /// <param name="propertyName">
+        /// プロパティ名。 CallerMemberNameAttribute により自動設定される。
+        /// </param>
+        protected void AddBindableCollectionEventChain<TItem>(
+            BindableCollection<TItem> field,
+            [CallerMemberName] string propertyName = null)
+            where TItem : class, INotifyPropertyChanged
+        {
+            if (field != null)
+            {
+                field.ItemPropertyChanged +=
+                    this.GetPropertyChangedChainDelegate(propertyName);
+                field.CollectionChanged +=
+                    this.GetCollectionChangedChainDelegate(propertyName);
+            }
+        }
+
+        /// <summary>
+        /// BindableCollection{TItem} 派生クラスプロパティの各種変更通知を
+        /// このオブジェクトの PropertyChanged イベントに伝搬させる設定を解除する。
+        /// </summary>
+        /// <typeparam name="TItem">プロパティ値の要素型。</typeparam>
+        /// <param name="field">設定解除先フィールド。</param>
+        /// <param name="propertyName">
+        /// プロパティ名。 CallerMemberNameAttribute により自動設定される。
+        /// </param>
+        protected void RemoveBindableCollectionEventChain<TItem>(
+            BindableCollection<TItem> field,
+            [CallerMemberName] string propertyName = null)
+            where TItem : class, INotifyPropertyChanged
+        {
+            if (field != null)
+            {
+                field.ItemPropertyChanged -=
+                    this.GetPropertyChangedChainDelegate(propertyName);
                 field.CollectionChanged -=
                     this.GetCollectionChangedChainDelegate(propertyName);
             }
