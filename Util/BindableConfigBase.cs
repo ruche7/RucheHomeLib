@@ -264,8 +264,7 @@ namespace RucheHome.Util
         /// PropertyChanged イベント伝搬用デリゲートディクショナリ。
         /// </summary>
         private Dictionary<string, PropertyChangedEventHandler>
-        PropertyChangedChainDelegates =
-            new Dictionary<string, PropertyChangedEventHandler>();
+        PropertyChangedChainDelegates = null;
 
         /// <summary>
         /// PropertyChanged イベント伝搬用デリゲートを取得する。
@@ -274,11 +273,17 @@ namespace RucheHome.Util
         private PropertyChangedEventHandler GetPropertyChangedChainDelegate(
             string propertyName)
         {
+            if (this.PropertyChangedChainDelegates == null)
+            {
+                this.PropertyChangedChainDelegates =
+                    new Dictionary<string, PropertyChangedEventHandler>();
+            }
+
             PropertyChangedEventHandler result;
-            if (!PropertyChangedChainDelegates.TryGetValue(propertyName, out result))
+            if (!this.PropertyChangedChainDelegates.TryGetValue(propertyName, out result))
             {
                 result = (s, e) => this.RaisePropertyChanged(propertyName);
-                PropertyChangedChainDelegates.Add(propertyName, result);
+                this.PropertyChangedChainDelegates.Add(propertyName, result);
             }
 
             return result;
@@ -288,8 +293,7 @@ namespace RucheHome.Util
         /// CollectionChanged イベント伝搬用デリゲートディクショナリ。
         /// </summary>
         private Dictionary<string, NotifyCollectionChangedEventHandler>
-        CollectionChangedChainDelegates =
-            new Dictionary<string, NotifyCollectionChangedEventHandler>();
+        CollectionChangedChainDelegates = null;
 
         /// <summary>
         /// CollectionChanged イベント伝搬用デリゲートを取得する。
@@ -298,11 +302,17 @@ namespace RucheHome.Util
         private NotifyCollectionChangedEventHandler GetCollectionChangedChainDelegate(
             string propertyName)
         {
+            if (this.CollectionChangedChainDelegates == null)
+            {
+                this.CollectionChangedChainDelegates =
+                    new Dictionary<string, NotifyCollectionChangedEventHandler>();
+            }
+
             NotifyCollectionChangedEventHandler result;
-            if (!CollectionChangedChainDelegates.TryGetValue(propertyName, out result))
+            if (!this.CollectionChangedChainDelegates.TryGetValue(propertyName, out result))
             {
                 result = (s, e) => this.RaisePropertyChanged(propertyName);
-                CollectionChangedChainDelegates.Add(propertyName, result);
+                this.CollectionChangedChainDelegates.Add(propertyName, result);
             }
 
             return result;
