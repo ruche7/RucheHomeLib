@@ -83,14 +83,16 @@ namespace RucheHome.Util
         /// BindableCollection{TItem} 派生型プロパティ値を設定し、
         /// PropertyChanged イベントの伝搬設定を行い、変更をイベント通知する。
         /// </summary>
-        /// <typeparam name="T">プロパティ値の型。</typeparam>
-        /// <typeparam name="TItem">プロパティ値の要素型。</typeparam>
+        /// <typeparam name="TItem">プロパティ値の要素型。明示する必要がある。</typeparam>
+        /// <typeparam name="T">
+        /// プロパティ値の型。 BindableCollection{TItem} 派生型であること。
+        /// </typeparam>
         /// <param name="field">設定先フィールド。</param>
         /// <param name="value">設定値。</param>
         /// <param name="propertyName">
         /// プロパティ名。 CallerMemberNameAttribute により自動設定される。
         /// </param>
-        protected void SetBindableCollectionPropertyWithEventChain<T, TItem>(
+        protected void SetBindableCollectionPropertyWithEventChain<TItem, T>(
             ref T field,
             T value,
             [CallerMemberName] string propertyName = null)
