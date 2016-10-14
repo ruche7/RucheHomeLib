@@ -221,13 +221,20 @@ namespace RucheHome.Util
         /// DataMemberAttribute 属性の付与されたプロパティおよびフィールドを、
         /// 既定のコンストラクタを呼び出した直後の値で上書きする。
         /// </summary>
+        /// <param name="args">コンストラクタ引数配列。</param>
         /// <remarks>
-        /// 既定のコンストラクタが存在しない場合は例外が送出される。
+        /// コンストラクタが存在しない場合は例外が送出される。
         /// </remarks>
-        protected void ResetDataMembers()
+        protected void ResetDataMembers(params object[] args)
         {
             var type = this.GetType();
-            var src = Activator.CreateInstance(type, true);
+            var src =
+                Activator.CreateInstance(
+                    type,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                    null,
+                    args,
+                    null);
 
             // プロパティ上書き
             var propInfos =
