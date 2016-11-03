@@ -25,7 +25,12 @@ namespace RucheHome.Util.Extensions.String
             int startIndex,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                self[startIndex],
+                ref startIndex,
+                moveAfter);
+
             return self.Remove(startIndex);
         }
 
@@ -46,7 +51,13 @@ namespace RucheHome.Util.Extensions.String
             int count,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref count, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                i => self[i],
+                ref startIndex,
+                ref count,
+                moveAfter);
+
             return self.Remove(startIndex, count);
         }
 
@@ -65,7 +76,12 @@ namespace RucheHome.Util.Extensions.String
             int startIndex,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                self[startIndex],
+                ref startIndex,
+                moveAfter);
+
             return self.Substring(startIndex);
         }
 
@@ -86,7 +102,13 @@ namespace RucheHome.Util.Extensions.String
             int count,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref count, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                i => self[i],
+                ref startIndex,
+                ref count,
+                moveAfter);
+
             return self.Substring(startIndex, count);
         }
 
@@ -105,7 +127,11 @@ namespace RucheHome.Util.Extensions.String
             int startIndex,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                self[startIndex],
+                ref startIndex,
+                moveAfter);
 
             var length =
                 (self == null || startIndex < 0 || startIndex > self.Length) ?
@@ -131,7 +157,13 @@ namespace RucheHome.Util.Extensions.String
             int length,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref length, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                i => self[i],
+                ref startIndex,
+                ref length,
+                moveAfter);
+
             return self.Remove(startIndex, length);
         }
 
@@ -150,7 +182,11 @@ namespace RucheHome.Util.Extensions.String
             int startIndex,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                self[startIndex],
+                ref startIndex,
+                moveAfter);
 
             var length =
                 (self == null || startIndex < 0 || startIndex > self.Length) ?
@@ -176,29 +212,38 @@ namespace RucheHome.Util.Extensions.String
             int length,
             bool moveAfter = false)
         {
-            CorrectRangeSurrogateSafe(self, ref startIndex, ref length, moveAfter);
+            CorrectRangeSurrogateSafe(
+                self.Length,
+                i => self[i],
+                ref startIndex,
+                ref length,
+                moveAfter);
+
             return self.ToString(startIndex, length);
         }
 
         /// <summary>
         /// サロゲートペアを分断しないように範囲指定値を補正する。
         /// </summary>
-        /// <param name="self">処理対象の文字列。</param>
+        /// <param name="selfLength">処理対象文字列の長さ。</param>
+        /// <param name="selfCharAtStartIndex">
+        /// 処理対象文字列の startIndex の位置にある文字。
+        /// </param>
         /// <param name="startIndex">補正対象の開始位置値。</param>
         /// <param name="moveAfter">
         /// 指定位置がサロゲートペアを分断する時、位置を後方にずらすならば true 。
         /// 既定では前方にずらす。
         /// </param>
         private static void CorrectRangeSurrogateSafe(
-            dynamic self,
+            int selfLength,
+            char selfCharAtStartIndex,
             ref int startIndex,
             bool moveAfter)
         {
             if (
-                self != null &&
                 startIndex > 0 &&
-                startIndex < self.Length &&
-                char.IsLowSurrogate(self[startIndex]))
+                startIndex < selfLength &&
+                char.IsLowSurrogate(selfCharAtStartIndex))
             {
                 // 開始位置が下位サロゲートなら範囲を移動
                 startIndex += moveAfter ? +1 : -1;
@@ -208,7 +253,10 @@ namespace RucheHome.Util.Extensions.String
         /// <summary>
         /// サロゲートペアを分断しないように範囲指定値を補正する。
         /// </summary>
-        /// <param name="self">処理対象の文字列。</param>
+        /// <param name="selfLength">処理対象文字列の長さ。</param>
+        /// <param name="selfCharGetter">
+        /// 処理対象文字列から特定位置の文字を取得するデリゲート。
+        /// </param>
         /// <param name="startIndex">補正対象の開始位置値。</param>
         /// <param name="count">補正対象の文字数値。</param>
         /// <param name="moveAfter">
@@ -216,27 +264,27 @@ namespace RucheHome.Util.Extensions.String
         /// 既定では前方にずらす。
         /// </param>
         private static void CorrectRangeSurrogateSafe(
-            dynamic self,
+            int selfLength,
+            Func<int, char> selfCharGetter,
             ref int startIndex,
             ref int count,
             bool moveAfter)
         {
             if (
-                self != null &&
                 startIndex >= 0 &&
                 count >= 0 &&
-                startIndex + count <= self.Length)
+                startIndex + count <= selfLength)
             {
                 if (
                     startIndex > 0 &&
-                    startIndex < self.Length &&
-                    char.IsLowSurrogate(self[startIndex]))
+                    startIndex < selfLength &&
+                    char.IsLowSurrogate(selfCharGetter(startIndex)))
                 {
                     // 開始位置が下位サロゲートなら範囲を移動
                     startIndex += moveAfter ? +1 : -1;
 
                     // ++startIndex により終端位置が範囲外になるなら補正
-                    if (moveAfter && startIndex + count > self.Length)
+                    if (moveAfter && startIndex + count > selfLength)
                     {
                         --count;
                     }
@@ -245,7 +293,7 @@ namespace RucheHome.Util.Extensions.String
                 if (count > 0)
                 {
                     var end = startIndex + count;
-                    if (end < self.Length && char.IsLowSurrogate(self[end]))
+                    if (end < selfLength && char.IsLowSurrogate(selfCharGetter(end)))
                     {
                         // 終端位置が下位サロゲートなら範囲を移動
                         count += moveAfter ? +1 : -1;
