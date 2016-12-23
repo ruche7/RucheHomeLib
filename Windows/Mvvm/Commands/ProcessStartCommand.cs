@@ -5,22 +5,42 @@ using System.Windows.Input;
 namespace RucheHome.Windows.Mvvm.Commands
 {
     /// <summary>
-    /// コマンドパラメータを Process.Start メソッドに渡すコマンドを定義するクラス。
+    /// コマンドパラメータ、またはプロパティ値を
+    /// Process.Start メソッドに渡すコマンドを定義するクラス。
     /// </summary>
+    /// <remarks>
+    /// 有効なコマンドパラメータが設定されていればそれをファイル名として用いる。
+    /// そうでなければプロパティ値を用いる。
+    /// </remarks>
     public class ProcessStartCommand : ICommand
     {
         /// <summary>
-        /// インスタンス。 XAML から x:Static で参照する。
-        /// </summary>
-        public static readonly ProcessStartCommand Instance =
-            new ProcessStartCommand();
-
-        /// <summary>
         /// コンストラクタ。
         /// </summary>
-        public ProcessStartCommand()
+        /// <param name="fileName">ファイル名。</param>
+        /// <param name="arguments">コマンドライン引数文字列。</param>
+        public ProcessStartCommand(string fileName = null, string arguments = null)
         {
+            this.FileName = fileName;
+            this.Arguments = arguments;
         }
+
+        /// <summary>
+        /// ファイル名を取得または設定する。
+        /// </summary>
+        /// <remarks>
+        /// null ならばプロパティ値を利用しない。
+        /// </remarks>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// コマンドライン引数文字列を取得または設定する。
+        /// </summary>
+        /// <remarks>
+        /// null ならばコマンドライン引数なしで実行する。
+        /// コマンドパラメータを用いる場合は無視される。
+        /// </remarks>
+        public string Arguments { get; set; }
 
         #region ICommand の実装
 
@@ -37,15 +57,31 @@ namespace RucheHome.Windows.Mvvm.Commands
         /// <param name="parameter">コマンドパラメータ。</param>
         public void Execute(object parameter)
         {
-            var cmd = parameter as string;
-            if (string.IsNullOrWhiteSpace(cmd))
+            var fileName = parameter as string;
+            string arguments = null;
+
+            // コマンドパラメータが無効ならプロパティ値を用いる
+            if (string.IsNullOrWhiteSpace(fileName))
             {
-                return;
+                fileName = this.FileName;
+                arguments = this.Arguments;
+
+                if (fileName == null)
+                {
+                    return;
+                }
             }
 
             try
             {
-                Process.Start(cmd);
+                if (arguments == null)
+                {
+                    Process.Start(fileName);
+                }
+                else
+                {
+                    Process.Start(fileName, arguments);
+                }
             }
             catch { }
         }
