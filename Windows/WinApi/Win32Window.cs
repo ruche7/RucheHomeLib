@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace RucheHome.Windows.WinApi
@@ -286,18 +285,6 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
-        /// 子孫ウィンドウを非同期で検索する。
-        /// </summary>
-        /// <param name="className">
-        /// ウィンドウクラス名。 null を指定するとウィンドウクラス名を限定しない。
-        /// </param>
-        /// <returns>子孫ウィンドウリスト。取得できなければ null 。</returns>
-        public Task<List<Win32Window>> FindDescendantsAsync(string className = null)
-        {
-            return Task.Run(() => this.FindDescendants(className));
-        }
-
-        /// <summary>
         /// 子ウィンドウを検索して列挙する。
         /// </summary>
         /// <param name="className">
@@ -365,18 +352,6 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
-        /// ウィンドウテキストを非同期で取得する。
-        /// </summary>
-        /// <param name="timeoutMilliseconds">
-        /// タイムアウトミリ秒数。負数ならばタイムアウトしない。
-        /// </param>
-        /// <returns>ウィンドウテキスト。取得できなかった場合は null 。</returns>
-        public Task<string> GetTextAsync(int timeoutMilliseconds = -1)
-        {
-            return Task.Run(() => this.GetText(timeoutMilliseconds));
-        }
-
-        /// <summary>
         /// ウィンドウテキストを設定する。
         /// </summary>
         /// <param name="text">ウィンドウテキスト。</param>
@@ -397,19 +372,6 @@ namespace RucheHome.Windows.WinApi
         }
 
         /// <summary>
-        /// ウィンドウテキストを非同期で設定する。
-        /// </summary>
-        /// <param name="text">ウィンドウテキスト。</param>
-        /// <param name="timeoutMilliseconds">
-        /// タイムアウトミリ秒数。負数ならばタイムアウトしない。
-        /// </param>
-        /// <returns>成功した場合は true 。そうでなければ false 。</returns>
-        public Task<bool> SetTextAsync(string text, int timeoutMilliseconds = -1)
-        {
-            return Task.Run(() => this.SetText(text, timeoutMilliseconds));
-        }
-
-        /// <summary>
         /// ウィンドウメッセージを送信する。
         /// </summary>
         /// <param name="message">ウィンドウメッセージ。</param>
@@ -426,27 +388,6 @@ namespace RucheHome.Windows.WinApi
             int timeoutMilliseconds = -1)
         {
             return this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
-        }
-
-        /// <summary>
-        /// ウィンドウメッセージを非同期で送信する。
-        /// </summary>
-        /// <param name="message">ウィンドウメッセージ。</param>
-        /// <param name="wparam">パラメータ1。</param>
-        /// <param name="lparam">パラメータ2。</param>
-        /// <param name="timeoutMilliseconds">
-        /// タイムアウトミリ秒数。負数ならばタイムアウトしない。
-        /// </param>
-        /// <returns>結果値。タイムアウトした場合は null 。</returns>
-        public Task<IntPtr?> SendMessageAsync(
-            uint message,
-            IntPtr wparam = default(IntPtr),
-            IntPtr lparam = default(IntPtr),
-            int timeoutMilliseconds = -1)
-        {
-            return
-                Task.Run(
-                    () => this.SendMessage(message, wparam, lparam, timeoutMilliseconds));
         }
 
         /// <summary>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Threading;
 
 namespace RucheHome.Util
 {
@@ -19,7 +21,9 @@ namespace RucheHome.Util
         /// 全体で設定を共有するならば空文字列または null 。
         /// </param>
         /// <param name="baseDirectoryPath">
-        /// 基準ディレクトリパス。既定値を用いるならば空文字列または null 。
+        /// 基準ディレクトリパス。
+        /// 相対パスを指定するとローカルアプリケーションフォルダを基準位置とする。
+        /// 実行中プロセスの AssemblyCompanyAttribute 属性を用いるならば null 。
         /// </param>
         /// <param name="serializer">
         /// シリアライザ。既定のシリアライザを用いるならば null 。
@@ -31,13 +35,7 @@ namespace RucheHome.Util
         {
             this.Value = default(T);
 
-            this.BaseDirectoryPath =
-                !string.IsNullOrEmpty(baseDirectoryPath) ?
-                    baseDirectoryPath :
-                    Path.Combine(
-                        Environment.GetFolderPath(
-                            Environment.SpecialFolder.LocalApplicationData),
-                        @"ruche-home");
+            this.BaseDirectoryPath = MakeBaseDirectoryPath(baseDirectoryPath);
 
             var fileName = typeof(T).FullName + @".config";
             var filePath =
@@ -80,6 +78,11 @@ namespace RucheHome.Util
                 return false;
             }
 
+            if (Interlocked.Exchange(ref this.ioLock, 1) != 0)
+            {
+                return false;
+            }
+
             try
             {
                 // 読み取り
@@ -97,6 +100,10 @@ namespace RucheHome.Util
             {
                 return false;
             }
+            finally
+            {
+                Interlocked.Exchange(ref this.ioLock, 0);
+            }
 
             return true;
         }
@@ -107,6 +114,11 @@ namespace RucheHome.Util
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
         public bool Save()
         {
+            if (Interlocked.Exchange(ref this.ioLock, 1) != 0)
+            {
+                return false;
+            }
+
             try
             {
                 // 親ディレクトリ作成
@@ -126,8 +138,66 @@ namespace RucheHome.Util
             {
                 return false;
             }
+            finally
+            {
+                Interlocked.Exchange(ref this.ioLock, 0);
+            }
 
             return true;
+        }
+
+        /// <summary>
+        /// I/O処理排他ロック用。
+        /// </summary>
+        private int ioLock = 0;
+
+        /// <summary>
+        /// コンストラクタ引数値を基に基準ディレクトリパスを作成する。
+        /// </summary>
+        /// <param name="baseDirectoryPath">コンストラクタ引数値。</param>
+        /// <returns>基準ディレクトリパス。</returns>
+        private static string MakeBaseDirectoryPath(string baseDirectoryPath)
+        {
+            var baseDir = baseDirectoryPath;
+            bool useCompany = (baseDirectoryPath == null);
+
+            // null ならば実行中プロセスの会社名を用いる
+            if (useCompany)
+            {
+                baseDir =
+                    Assembly
+                        .GetEntryAssembly()?
+                        .GetCustomAttribute<AssemblyCompanyAttribute>()?
+                        .Company;
+                if (baseDir == null)
+                {
+                    throw new InvalidOperationException(
+                        nameof(AssemblyCompanyAttribute) + @" is not defined.");
+                }
+                else if (string.IsNullOrWhiteSpace(baseDir))
+                {
+                    throw new InvalidOperationException(
+                        nameof(AssemblyCompanyAttribute) + @" is blank.");
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(baseDir))
+            {
+                throw new ArgumentException(
+                    $@"`{nameof(baseDirectoryPath)}` is blank.",
+                    nameof(baseDirectoryPath));
+            }
+
+            // 会社名or相対パスならばローカルアプリケーションフォルダを基準位置とする
+            if (useCompany || !Path.IsPathRooted(baseDir))
+            {
+                baseDir =
+                    Path.Combine(
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData),
+                        baseDir);
+            }
+
+            return baseDir;
         }
     }
 }

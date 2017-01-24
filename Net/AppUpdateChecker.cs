@@ -151,7 +151,7 @@ namespace RucheHome.Net
             if (string.IsNullOrWhiteSpace(currentProduct))
             {
                 throw new ArgumentException(
-                    @"`product` is blank.",
+                    $@"`{nameof(currentProduct)}` is blank.",
                     nameof(currentProduct));
             }
             if (currentVersion == null)
@@ -261,6 +261,23 @@ namespace RucheHome.Net
         /// 更新チェック処理を行う。
         /// </summary>
         /// <returns>成功したならば true 。そうでなければ false 。</returns>
+        /// <remarks>
+        /// <para>
+        /// 非同期処理はアプリ更新情報JSONファイルのダウンロード待ちでのみ行われる。
+        /// JSONファイルの解析等は同期処理であるため、
+        /// 必要であれば呼び出し元で Task.Run 等を用いること。
+        /// </para>
+        /// <para>
+        /// このメソッドを複数スレッドで同時に呼び出すことはできない。
+        /// 最初の呼び出しからの復帰前に他のスレッドから呼び出した場合、
+        /// 何も行わず即座に false を返す。
+        /// </para>
+        /// <para>
+        /// 各プロパティの PropertyChanged イベント通知を特定のスレッドで
+        /// 受け取りたい場合、このメソッドを呼び出す前に
+        /// SynchronizationContext プロパティを設定しておくこと。
+        /// </para>
+        /// </remarks>
         public async Task<bool> Run()
         {
             if (this.IsBusy || Interlocked.Exchange(ref this.runLock, 1) != 0)
@@ -285,7 +302,8 @@ namespace RucheHome.Net
                             this.BaseUri,
                             this.CurrentProduct,
                             this.CurrentProduct,
-                            this.CurrentVersion);
+                            this.CurrentVersion)
+                            .ConfigureAwait(false);
                 }
 
                 this.NewestProduct = info.Product;
@@ -393,7 +411,8 @@ namespace RucheHome.Net
 
             // アプリ更新情報JSONファイルをダウンロード
             var json =
-                await webClient.DownloadDataTaskAsync(baseUri + product + @".json");
+                await webClient.DownloadDataTaskAsync(baseUri + product + @".json")
+                    .ConfigureAwait(false);
             if (json == null || json.Length <= 0)
             {
                 return null;
@@ -407,7 +426,7 @@ namespace RucheHome.Net
                         json,
                         XmlDictionaryReaderQuotas.Max))
             {
-                elem = await Task.Run(() => XElement.Load(reader));
+                elem = XElement.Load(reader);
             }
 
             // リダイレクト情報確認
@@ -425,7 +444,8 @@ namespace RucheHome.Net
                             product : (string)redirectProductElem,
                         currentProduct,
                         currentVersion,
-                        ++redirectCount);
+                        ++redirectCount)
+                        .ConfigureAwait(false);
             }
 
             // 情報取得
