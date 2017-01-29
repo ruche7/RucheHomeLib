@@ -33,7 +33,7 @@ namespace RucheHome.Threading
         /// </summary>
         ~SemaphoreSlimLock()
         {
-            this.Dispose();
+            this.Dispose(false);
         }
 
         /// <summary>
@@ -134,9 +134,21 @@ namespace RucheHome.Threading
         #region IDisposable の実装
 
         /// <summary>
-        /// 内部に保持している SemaphoreSlim インスタンスを解放する。
+        /// リソースの破棄を行う。
         /// </summary>
         public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// リソース破棄の実処理を行う。
+        /// </summary>
+        /// <param name="disposing">
+        /// Dispose メソッドから呼び出された場合は true 。
+        /// </param>
+        protected virtual void Dispose(bool disposing)
         {
             this.Semaphore.Dispose();
         }
@@ -177,7 +189,7 @@ namespace RucheHome.Threading
             }
 
             /// <summary>
-            /// SemaphoreSlim インスタンスを取得する。
+            /// SemaphoreSlim インスタンスを取得または設定する。
             /// </summary>
             private SemaphoreSlim Semaphore { get; set; }
         }
