@@ -12,20 +12,10 @@ namespace RucheHome.Threading
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="initialCount">許可する移行要求数の初期値。</param>
-        public SemaphoreSlimLock(int initialCount)
+        /// <param name="count">同時に許可する SemaphoreSlim 移行要求数。</param>
+        public SemaphoreSlimLock(int count = 1)
         {
-            this.Semaphore = new SemaphoreSlim(initialCount);
-        }
-
-        /// <summary>
-        /// コンストラクタ。
-        /// </summary>
-        /// <param name="initialCount">許可する移行要求数の初期値。</param>
-        /// <param name="maxCount">許可する移行要求数の最大値。</param>
-        public SemaphoreSlimLock(int initialCount, int maxCount)
-        {
-            this.Semaphore = new SemaphoreSlim(initialCount, maxCount);
+            this.Semaphore = new SemaphoreSlim(count, count);
         }
 
         /// <summary>
@@ -37,7 +27,7 @@ namespace RucheHome.Threading
         }
 
         /// <summary>
-        /// 現在許可可能な移行要求数を取得する。
+        /// 現在同時に許可可能な移行要求数を取得する。
         /// </summary>
         public int CurrentCount
         {
