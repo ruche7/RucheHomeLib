@@ -1,8 +1,9 @@
 # RucheHomeLib
 
-���[�`�F(@ruche7)�̎���c�[���p���ʒ�`���C�u�����ł��B
-���L�̃��[���Ŏ������Ă��܂��B
+ルーチェ(@ruche7)の自作ツール用共通定義ライブラリです。
+下記のルールで実装しています。
 
-* �^�[�Q�b�g�� .NET Framework 4.5 �B
-* XAML�͊܂߂Ȃ��B
-* �O�����C�u�����͊܂߂Ȃ��B(System.Windows.Interactivity.dll ������)
+* ターゲットは .NET Framework 4.5 。
+* Visual Studio, C# バージョンは最新に追従。
+* XAMLは含めない。
+* 外部ライブラリは含めない。(System.Windows.Interactivity.dll を除く)
