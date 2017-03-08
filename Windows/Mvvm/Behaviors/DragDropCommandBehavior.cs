@@ -35,8 +35,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand DragEnterCommand
         {
-            get { return (ICommand)this.GetValue(DragEnterCommandProperty); }
-            set { this.SetValue(DragEnterCommandProperty, value); }
+            get => (ICommand)this.GetValue(DragEnterCommandProperty);
+            set => this.SetValue(DragEnterCommandProperty, value);
         }
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand DragOverCommand
         {
-            get { return (ICommand)this.GetValue(DragOverCommandProperty); }
-            set { this.SetValue(DragOverCommandProperty, value); }
+            get => (ICommand)this.GetValue(DragOverCommandProperty);
+            set => this.SetValue(DragOverCommandProperty, value);
         }
 
         /// <summary>
@@ -73,8 +73,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand DragLeaveCommand
         {
-            get { return (ICommand)this.GetValue(DragLeaveCommandProperty); }
-            set { this.SetValue(DragLeaveCommandProperty, value); }
+            get => (ICommand)this.GetValue(DragLeaveCommandProperty);
+            set => this.SetValue(DragLeaveCommandProperty, value);
         }
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand DropCommand
         {
-            get { return (ICommand)this.GetValue(DropCommandProperty); }
-            set { this.SetValue(DropCommandProperty, value); }
+            get => (ICommand)this.GetValue(DropCommandProperty);
+            set => this.SetValue(DropCommandProperty, value);
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand PreviewDragEnterCommand
         {
-            get { return (ICommand)this.GetValue(PreviewDragEnterCommandProperty); }
-            set { this.SetValue(PreviewDragEnterCommandProperty, value); }
+            get => (ICommand)this.GetValue(PreviewDragEnterCommandProperty);
+            set => this.SetValue(PreviewDragEnterCommandProperty, value);
         }
 
         /// <summary>
@@ -130,8 +130,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand PreviewDragOverCommand
         {
-            get { return (ICommand)this.GetValue(PreviewDragOverCommandProperty); }
-            set { this.SetValue(PreviewDragOverCommandProperty, value); }
+            get => (ICommand)this.GetValue(PreviewDragOverCommandProperty);
+            set => this.SetValue(PreviewDragOverCommandProperty, value);
         }
 
         /// <summary>
@@ -149,8 +149,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand PreviewDragLeaveCommand
         {
-            get { return (ICommand)this.GetValue(PreviewDragLeaveCommandProperty); }
-            set { this.SetValue(PreviewDragLeaveCommandProperty, value); }
+            get => (ICommand)this.GetValue(PreviewDragLeaveCommandProperty);
+            set => this.SetValue(PreviewDragLeaveCommandProperty, value);
         }
 
         /// <summary>
@@ -168,8 +168,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// </summary>
         public ICommand PreviewDropCommand
         {
-            get { return (ICommand)this.GetValue(PreviewDropCommandProperty); }
-            set { this.SetValue(PreviewDropCommandProperty, value); }
+            get => (ICommand)this.GetValue(PreviewDropCommandProperty);
+            set => this.SetValue(PreviewDropCommandProperty, value);
         }
 
         /// <summary>
@@ -187,45 +187,29 @@ namespace RucheHome.Windows.Mvvm.Behaviors
 
         #region イベントメソッド群
 
-        private void OnDragEnter(object sender, DragEventArgs e)
-        {
+        private void OnDragEnter(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.DragEnterCommand, e);
-        }
 
-        private void OnDragOver(object sender, DragEventArgs e)
-        {
+        private void OnDragOver(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.DragOverCommand, e);
-        }
 
-        private void OnDragLeave(object sender, DragEventArgs e)
-        {
+        private void OnDragLeave(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.DragLeaveCommand, e);
-        }
 
-        private void OnDrop(object sender, DragEventArgs e)
-        {
+        private void OnDrop(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.DropCommand, e);
-        }
 
-        private void OnPreviewDragEnter(object sender, DragEventArgs e)
-        {
+        private void OnPreviewDragEnter(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.PreviewDragOverCommand, e);
-        }
 
-        private void OnPreviewDragOver(object sender, DragEventArgs e)
-        {
+        private void OnPreviewDragOver(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.PreviewDragOverCommand, e);
-        }
 
-        private void OnPreviewDragLeave(object sender, DragEventArgs e)
-        {
+        private void OnPreviewDragLeave(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.PreviewDragLeaveCommand, e);
-        }
 
-        private void OnPreviewDrop(object sender, DragEventArgs e)
-        {
+        private void OnPreviewDrop(object sender, DragEventArgs e) =>
             this.ExecuteCommand(this.PreviewDropCommand, e);
-        }
 
         #endregion
 

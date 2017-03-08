@@ -29,10 +29,7 @@ namespace RucheHome.Threading
         /// <summary>
         /// 現在同時に許可可能な移行要求数を取得する。
         /// </summary>
-        public int CurrentCount
-        {
-            get { return this.Semaphore.CurrentCount; }
-        }
+        public int CurrentCount => this.Semaphore.CurrentCount;
 
         /// <summary>
         /// SemaphoreSlim に移行するために待機し、

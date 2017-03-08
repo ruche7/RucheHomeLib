@@ -60,8 +60,8 @@ namespace RucheHome.Windows.WinApi
         /// </summary>
         public bool IsEnabled
         {
-            get { return IsWindowEnabled(this.Handle); }
-            set { EnableWindow(this.Handle, value); }
+            get => IsWindowEnabled(this.Handle);
+            set => EnableWindow(this.Handle, value);
         }
 
         /// <summary>
@@ -69,14 +69,11 @@ namespace RucheHome.Windows.WinApi
         /// </summary>
         public WindowState State
         {
-            get
-            {
-                return
-                    IsIconic(this.Handle) ?
-                        WindowState.Minimized :
-                        IsZoomed(this.Handle) ?
-                            WindowState.Maximized : WindowState.Normal;
-            }
+            get =>
+                IsIconic(this.Handle) ?
+                    WindowState.Minimized :
+                    IsZoomed(this.Handle) ?
+                        WindowState.Maximized : WindowState.Normal;
             set
             {
                 if (value != this.State)

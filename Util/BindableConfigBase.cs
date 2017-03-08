@@ -286,8 +286,10 @@ namespace RucheHome.Util
                     new Dictionary<string, PropertyChangedEventHandler>();
             }
 
-            PropertyChangedEventHandler result;
-            if (!this.PropertyChangedChainDelegates.TryGetValue(propertyName, out result))
+            if (
+                !this.PropertyChangedChainDelegates.TryGetValue(
+                    propertyName,
+                    out var result))
             {
                 result = (s, e) => this.RaisePropertyChanged(propertyName);
                 this.PropertyChangedChainDelegates.Add(propertyName, result);
@@ -315,8 +317,10 @@ namespace RucheHome.Util
                     new Dictionary<string, NotifyCollectionChangedEventHandler>();
             }
 
-            NotifyCollectionChangedEventHandler result;
-            if (!this.CollectionChangedChainDelegates.TryGetValue(propertyName, out result))
+            if (
+                !this.CollectionChangedChainDelegates.TryGetValue(
+                    propertyName,
+                    out var result))
             {
                 result = (s, e) => this.RaisePropertyChanged(propertyName);
                 this.CollectionChangedChainDelegates.Add(propertyName, result);

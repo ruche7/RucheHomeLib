@@ -71,12 +71,8 @@ namespace RucheHome.Windows.Media
                     Fonts.SystemFontFamilies
                         .Select(
                             f =>
-                            {
-                                string name;
-                                return
-                                    f.FamilyNames.TryGetValue(this.Language, out name) ?
-                                        name : f.Source;
-                            })
+                                f.FamilyNames.TryGetValue(this.Language, out var name) ?
+                                    name : f.Source)
                         .GetEnumerator();
         }
 

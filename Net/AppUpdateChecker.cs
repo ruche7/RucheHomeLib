@@ -187,8 +187,8 @@ namespace RucheHome.Net
         /// </summary>
         public bool IsBusy
         {
-            get { return this.busy; }
-            private set { this.SetProperty(ref this.busy, value); }
+            get => this.busy;
+            private set => this.SetProperty(ref this.busy, value);
         }
         private bool busy = false;
 
@@ -200,8 +200,8 @@ namespace RucheHome.Net
         /// </remarks>
         public bool CanUpdate
         {
-            get { return this.canUpdate; }
-            private set { this.SetProperty(ref this.canUpdate, value); }
+            get => this.canUpdate;
+            private set => this.SetProperty(ref this.canUpdate, value);
         }
         private bool canUpdate = false;
 
@@ -213,8 +213,8 @@ namespace RucheHome.Net
         /// </remarks>
         public string NewestProduct
         {
-            get { return this.newestProduct; }
-            private set { this.SetProperty(ref this.newestProduct, value); }
+            get => this.newestProduct;
+            private set => this.SetProperty(ref this.newestProduct, value);
         }
         private string newestProduct = null;
 
@@ -226,8 +226,8 @@ namespace RucheHome.Net
         /// </remarks>
         public Version NewestVersion
         {
-            get { return this.newestVersion; }
-            private set { this.SetProperty(ref this.newestVersion, value); }
+            get => this.newestVersion;
+            private set => this.SetProperty(ref this.newestVersion, value);
         }
         private Version newestVersion = null;
 
@@ -239,8 +239,8 @@ namespace RucheHome.Net
         /// </remarks>
         public Uri PageUri
         {
-            get { return this.pageUri; }
-            private set { this.SetProperty(ref this.pageUri, value); }
+            get => this.pageUri;
+            private set => this.SetProperty(ref this.pageUri, value);
         }
         private Uri pageUri = null;
 
@@ -252,8 +252,8 @@ namespace RucheHome.Net
         /// </remarks>
         public string DisplayName
         {
-            get { return this.displayName; }
-            private set { this.SetProperty(ref this.displayName, value); }
+            get => this.displayName;
+            private set => this.SetProperty(ref this.displayName, value);
         }
         private string displayName = null;
 

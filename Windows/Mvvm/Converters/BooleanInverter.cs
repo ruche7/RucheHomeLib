@@ -26,15 +26,15 @@ namespace RucheHome.Windows.Mvvm.Converters
             object parameter,
             CultureInfo culture)
         {
-            if (value is bool)
+            if (value is bool v)
             {
-                return !(bool)value;
+                return !v;
             }
 
-            var v = value as bool?;
-            if (v.HasValue)
+            var nv = value as bool?;
+            if (nv.HasValue)
             {
-                return (bool?)!v.Value;
+                return (bool?)!nv.Value;
             }
 
             return DependencyProperty.UnsetValue;

@@ -27,16 +27,10 @@ namespace RucheHome.Windows.Mvvm.Converters
             object parameter,
             CultureInfo culture)
         {
-            try
+            if (value is bool v)
             {
-                if (!(value is bool))
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
-                return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+                return v ? Visibility.Visible : Visibility.Collapsed;
             }
-            catch { }
 
             return DependencyProperty.UnsetValue;
         }
@@ -55,16 +49,10 @@ namespace RucheHome.Windows.Mvvm.Converters
             object parameter,
             CultureInfo culture)
         {
-            try
+            if (value is Visibility v)
             {
-                if (!(value is Visibility))
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-
-                return ((Visibility)value == Visibility.Visible);
+                return (v == Visibility.Visible);
             }
-            catch { }
 
             return DependencyProperty.UnsetValue;
         }
