@@ -80,6 +80,10 @@ namespace RucheHome.Windows.Mvvm.Commands
             {
                 return this.CanExecute(p);
             }
+            if (default(T) == null && parameter == null)
+            {
+                return this.CanExecute(default(T));
+            }
             return false;
         }
 
@@ -88,6 +92,10 @@ namespace RucheHome.Windows.Mvvm.Commands
             if (parameter is T p)
             {
                 this.Execute(p);
+            }
+            else if (default(T) == null && parameter == null)
+            {
+                this.Execute(default(T));
             }
         }
 
