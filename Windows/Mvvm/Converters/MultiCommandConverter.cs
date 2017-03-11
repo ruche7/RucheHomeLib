@@ -45,7 +45,7 @@ namespace RucheHome.Windows.Mvvm.Converters
                             commands,
                             c =>
                             {
-                                if (c.CanExecute(p))
+                                if (c?.CanExecute(p) == true)
                                 {
                                     c.Execute(p);
                                 }
