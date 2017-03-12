@@ -70,13 +70,13 @@
     <Compile Include="Windows\Mvvm\Behaviors\DragDropCommandBehavior.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\FrameworkElementBehavior.cs" />
     <Compile Include="Windows\Mvvm\Behaviors\ListBoxAutoScrollBehavior.cs" />
-    <Compile Include="Windows\Mvvm\Commands\BindingCommand.cs" />
     <Compile Include="Windows\Mvvm\Commands\ProcessStartCommand.cs" />
     <Compile Include="Windows\Mvvm\Commands\RelayCommand.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanInverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\EnumValueDisplayConverter.cs" />
     <Compile Include="Windows\Mvvm\Converters\MultiCommandConverter.cs" />
+    <Compile Include="Windows\Mvvm\Converters\MultiEnumerableEachConverter.cs" />
     <Compile Include="Windows\WinApi\Win32Window.cs" />
   </ItemGroup>
   <ItemGroup />
