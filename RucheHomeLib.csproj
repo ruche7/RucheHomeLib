@@ -60,6 +60,7 @@
     <Compile Include="Util\BindableBase.cs" />
     <Compile Include="Util\BindableCollection.cs" />
     <Compile Include="Util\BindableConfigBase.cs" />
+    <Compile Include="Util\ConfigDirectoryPath.cs" />
     <Compile Include="Util\ConfigKeeper.cs" />
     <Compile Include="Util\Extensions\String\StringExtension.cs" />
     <Compile Include="Util\NonNullCollection.cs" />

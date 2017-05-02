@@ -16,32 +16,30 @@ namespace RucheHome.Util
         /// <summary>
         /// コンストラクタ。
         /// </summary>
-        /// <param name="subDirectoryName">
-        /// 設定保存先サブディレクトリ名。基準ディレクトリからの相対パス。
-        /// 全体で設定を共有するならば空文字列または null 。
+        /// <param name="subDirectory">
+        /// ベースディレクトリを基準位置とするサブディレクトリパス。
+        /// 絶対パスであったり、空白文字のみであってはならない。
+        /// 空文字列または null を指定すると、ベースディレクトリパスをそのまま用いる。
         /// </param>
-        /// <param name="baseDirectoryPath">
-        /// 基準ディレクトリパス。
-        /// 相対パスを指定するとローカルアプリケーションフォルダを基準位置とする。
-        /// 実行中プロセスの AssemblyCompanyAttribute 属性を用いるならば null 。
+        /// <param name="baseDirectory">
+        /// ベースディレクトリパス。
+        /// 空文字列や空白文字のみであってはならない。
+        /// 相対パスを指定すると、ローカルアプリケーションフォルダを基準位置とする。
+        /// null を指定すると、プロセスの AssemblyCompanyAttribute 属性を利用する。
         /// </param>
         /// <param name="serializer">
         /// シリアライザ。既定のシリアライザを用いるならば null 。
         /// </param>
         public ConfigKeeper(
-            string subDirectoryName = null,
-            string baseDirectoryPath = null,
+            string subDirectory = null,
+            string baseDirectory = null,
             XmlObjectSerializer serializer = null)
         {
             this.Value = default(T);
 
-            this.BaseDirectoryPath = MakeBaseDirectoryPath(baseDirectoryPath);
-
+            var dir = new ConfigDirectoryPath(subDirectory, baseDirectory);
             var fileName = typeof(T).FullName + @".config";
-            var filePath =
-                string.IsNullOrEmpty(subDirectoryName) ?
-                    fileName : Path.Combine(subDirectoryName, fileName);
-            this.FilePath = Path.Combine(this.BaseDirectoryPath, filePath);
+            this.FilePath = Path.Combine(dir.Value, fileName);
 
             this.Serializer = serializer ?? (new DataContractJsonSerializer(typeof(T)));
         }
@@ -60,11 +58,6 @@ namespace RucheHome.Util
         /// シリアライザを取得する。
         /// </summary>
         public XmlObjectSerializer Serializer { get; }
-
-        /// <summary>
-        /// ベースディレクトリパスを取得する。
-        /// </summary>
-        public string BaseDirectoryPath { get; }
 
         /// <summary>
         /// 設定を読み取る。
@@ -150,54 +143,5 @@ namespace RucheHome.Util
         /// I/O処理排他ロック用。
         /// </summary>
         private int ioLock = 0;
-
-        /// <summary>
-        /// コンストラクタ引数値を基に基準ディレクトリパスを作成する。
-        /// </summary>
-        /// <param name="baseDirectoryPath">コンストラクタ引数値。</param>
-        /// <returns>基準ディレクトリパス。</returns>
-        private static string MakeBaseDirectoryPath(string baseDirectoryPath)
-        {
-            var baseDir = baseDirectoryPath;
-            bool useCompany = (baseDirectoryPath == null);
-
-            // null ならば実行中プロセスの会社名を用いる
-            if (useCompany)
-            {
-                baseDir =
-                    Assembly
-                        .GetEntryAssembly()?
-                        .GetCustomAttribute<AssemblyCompanyAttribute>()?
-                        .Company;
-                if (baseDir == null)
-                {
-                    throw new InvalidOperationException(
-                        nameof(AssemblyCompanyAttribute) + @" is not defined.");
-                }
-                else if (string.IsNullOrWhiteSpace(baseDir))
-                {
-                    throw new InvalidOperationException(
-                        nameof(AssemblyCompanyAttribute) + @" is blank.");
-                }
-            }
-            else if (string.IsNullOrWhiteSpace(baseDir))
-            {
-                throw new ArgumentException(
-                    $@"`{nameof(baseDirectoryPath)}` is blank.",
-                    nameof(baseDirectoryPath));
-            }
-
-            // 会社名or相対パスならばローカルアプリケーションフォルダを基準位置とする
-            if (useCompany || !Path.IsPathRooted(baseDir))
-            {
-                baseDir =
-                    Path.Combine(
-                        Environment.GetFolderPath(
-                            Environment.SpecialFolder.LocalApplicationData),
-                        baseDir);
-            }
-
-            return baseDir;
-        }
     }
 }
