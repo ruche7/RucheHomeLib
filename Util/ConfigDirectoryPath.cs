@@ -47,7 +47,7 @@ namespace RucheHome.Util
             {
                 var v = value ?? "";
                 this.subDirectory =
-                    Path.IsPathRooted(v) ?
+                    !Path.IsPathRooted(v) ?
                         v :
                         throw new ArgumentException(
                             $@"`{nameof(value)}` is absolute path.",
