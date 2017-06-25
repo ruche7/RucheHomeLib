@@ -57,6 +57,7 @@
     <Compile Include="Net\AppUpdateChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\SemaphoreSlimLock.cs" />
+    <Compile Include="Util\ArgumentValidater.cs" />
     <Compile Include="Util\BindableBase.cs" />
     <Compile Include="Util\BindableCollection.cs" />
     <Compile Include="Util\BindableConfigBase.cs" />

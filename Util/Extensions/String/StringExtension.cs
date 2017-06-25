@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using static RucheHome.Util.ArgumentValidater;
+
 namespace RucheHome.Util.Extensions.String
 {
     /// <summary>
@@ -436,23 +438,6 @@ namespace RucheHome.Util.Extensions.String
                     return (other.OldValue.Length - this.OldValue.Length);
                 }
                 return this.ItemIndex.CompareTo(other.ItemIndex);
-            }
-        }
-
-        /// <summary>
-        /// 引数値の null 検証を行い、
-        /// null であれば ArgumentNullException 例外を発生させます。
-        /// </summary>
-        /// <param name="arg">引数値。</param>
-        /// <param name="argName">引数名。 null ならば利用されない。</param>
-        private static void ValidateArgumentNull(object arg, string argName)
-        {
-            if (arg == null)
-            {
-                throw
-                    (argName == null) ?
-                        new ArgumentNullException() :
-                        new ArgumentNullException(argName);
             }
         }
 
