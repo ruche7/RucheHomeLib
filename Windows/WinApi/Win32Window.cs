@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,9 +14,12 @@ namespace RucheHome.Windows.WinApi
     public class Win32Window
     {
         /// <summary>
-        /// デスクトップウィンドウ。
+        /// デスクトップウィンドウからインスタンスを生成する。
         /// </summary>
-        public static readonly Win32Window Desktop = new Win32Window(IntPtr.Zero);
+        public static Win32Window FromDesktop()
+        {
+            return new Win32Window(GetDesktopWindow());
+        }
 
         /// <summary>
         /// コンストラクタ。
@@ -54,6 +57,25 @@ namespace RucheHome.Windows.WinApi
             }
         }
         private string className = null;
+
+        /// <summary>
+        /// ウィンドウの属するプロセスのIDを取得する。
+        /// </summary>
+        public int ProcessId
+        {
+            get
+            {
+                if (!this.processId.HasValue)
+                {
+                    int id = 0;
+                    GetWindowThreadProcessId(this.Handle, out id);
+                    this.processId = id;
+                }
+
+                return this.processId.Value;
+            }
+        }
+        private int? processId = null;
 
         /// <summary>
         /// ウィンドウが有効な状態であるか否かを取得または設定する。
@@ -219,9 +241,7 @@ namespace RucheHome.Windows.WinApi
         /// 指定した階層だけ上のオーナーウィンドウを取得する。
         /// </summary>
         /// <param name="count">階層数。既定値は 1 。</param>
-        /// <returns>
-        /// オーナーウィンドウ。このウィンドウが子ウィンドウの場合は null 。
-        /// </returns>
+        /// <returns>オーナーウィンドウ。存在しない場合は null 。</returns>
         public Win32Window GetOwner(int count = 1)
         {
             if (count <= 0)
@@ -232,23 +252,11 @@ namespace RucheHome.Windows.WinApi
             var handle = this.Handle;
             for (int i = 0; i < count; ++i)
             {
-                // デスクトップにオーナーはいない
-                if (handle == Desktop.Handle)
+                handle = GetWindow(handle, GW_OWNER);
+                if (handle == IntPtr.Zero)
                 {
                     return null;
                 }
-
-                var h = GetWindow(handle, GW_OWNER);
-                if (h == IntPtr.Zero)
-                {
-                    // 親ウィンドウがいるなら子ウィンドウ
-                    if (GetAncestor(handle, GA_PARENT) != IntPtr.Zero)
-                    {
-                        return null;
-                    }
-                }
-
-                handle = h;
             }
 
             return new Win32Window(handle);
@@ -551,10 +559,18 @@ namespace RucheHome.Windows.WinApi
             string windowName);
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        private static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         private static extern IntPtr GetWindow(IntPtr windowHandle, uint flags);
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         private static extern IntPtr GetAncestor(IntPtr windowHandle, uint flags);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        private static extern int GetWindowThreadProcessId(
+            IntPtr windowHandle,
+            out int processId);
 
         [DllImport(
             "user32.dll",
