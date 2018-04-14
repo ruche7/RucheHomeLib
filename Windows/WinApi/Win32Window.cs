@@ -36,6 +36,31 @@ namespace RucheHome.Windows.WinApi
         public IntPtr Handle { get; }
 
         /// <summary>
+        /// ウィンドウが存在するか否かを取得する。
+        /// </summary>
+        public bool IsExists
+        {
+            get => IsWindow(this.Handle);
+        }
+
+        /// <summary>
+        /// ウィンドウが表示されているか否かを取得する。
+        /// </summary>
+        public bool IsVisible
+        {
+            get => IsWindowVisible(this.Handle);
+        }
+
+        /// <summary>
+        /// ウィンドウが有効な状態であるか否かを取得または設定する。
+        /// </summary>
+        public bool IsEnabled
+        {
+            get => IsWindowEnabled(this.Handle);
+            set => EnableWindow(this.Handle, value);
+        }
+
+        /// <summary>
         /// ウィンドウクラス名を取得する。
         /// </summary>
         public string ClassName
@@ -76,15 +101,6 @@ namespace RucheHome.Windows.WinApi
             }
         }
         private int? processId = null;
-
-        /// <summary>
-        /// ウィンドウが有効な状態であるか否かを取得または設定する。
-        /// </summary>
-        public bool IsEnabled
-        {
-            get => IsWindowEnabled(this.Handle);
-            set => EnableWindow(this.Handle, value);
-        }
 
         /// <summary>
         /// ウィンドウの表示状態を取得または設定する。
@@ -541,6 +557,24 @@ namespace RucheHome.Windows.WinApi
             public uint Timeout;
         };
 
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWindow(IntPtr windowHandle);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWindowVisible(IntPtr windowHandle);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWindowEnabled(IntPtr windowHandle);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnableWindow(
+            IntPtr windowHandle,
+            [MarshalAs(UnmanagedType.Bool)] bool enable);
+
         [return: MarshalAs(UnmanagedType.Bool)]
         private delegate bool EnumWindowProc(IntPtr windowHandle, IntPtr lparam);
 
@@ -599,16 +633,6 @@ namespace RucheHome.Windows.WinApi
             IntPtr windowHandle,
             [Out] StringBuilder name,
             int nameSize);
-
-        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsWindowEnabled(IntPtr windowHandle);
-
-        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EnableWindow(
-            IntPtr windowHandle,
-            [MarshalAs(UnmanagedType.Bool)] bool enable);
 
         [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
