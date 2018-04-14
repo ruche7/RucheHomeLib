@@ -16,10 +16,7 @@ namespace RucheHome.Windows.WinApi
         /// <summary>
         /// デスクトップウィンドウからインスタンスを生成する。
         /// </summary>
-        public static Win32Window FromDesktop()
-        {
-            return new Win32Window(GetDesktopWindow());
-        }
+        public static Win32Window FromDesktop() => new Win32Window(GetDesktopWindow());
 
         /// <summary>
         /// コンストラクタ。
@@ -38,18 +35,12 @@ namespace RucheHome.Windows.WinApi
         /// <summary>
         /// ウィンドウが存在するか否かを取得する。
         /// </summary>
-        public bool IsExists
-        {
-            get => IsWindow(this.Handle);
-        }
+        public bool IsExists => IsWindow(this.Handle);
 
         /// <summary>
         /// ウィンドウが表示されているか否かを取得する。
         /// </summary>
-        public bool IsVisible
-        {
-            get => IsWindowVisible(this.Handle);
-        }
+        public bool IsVisible => IsWindowVisible(this.Handle);
 
         /// <summary>
         /// ウィンドウが有効な状態であるか否かを取得または設定する。
@@ -142,14 +133,8 @@ namespace RucheHome.Windows.WinApi
         /// <summary>
         /// ウィンドウが最前面表示されているか否かを取得する。
         /// </summary>
-        public bool IsTopmost
-        {
-            get
-            {
-                var style = GetWindowLong(this.Handle, GWL_EXSTYLE).ToInt64();
-                return ((style & WS_EX_TOPMOST) != 0);
-            }
-        }
+        public bool IsTopmost =>
+            ((GetWindowLong(this.Handle, GWL_EXSTYLE).ToInt64() & WS_EX_TOPMOST) != 0);
 
         /// <summary>
         /// ウィンドウが最小化や最大化されている場合は元のサイズに戻す。
@@ -157,10 +142,7 @@ namespace RucheHome.Windows.WinApi
         /// <remarks>
         /// 最大化状態から最小化したウィンドウの場合は最大化状態に戻る。
         /// </remarks>
-        public void Restore()
-        {
-            ShowWindow(this.Handle, SW_RESTORE);
-        }
+        public void Restore() => ShowWindow(this.Handle, SW_RESTORE);
 
         /// <summary>
         /// ウィンドウをアクティブにする。
@@ -407,9 +389,8 @@ namespace RucheHome.Windows.WinApi
             IntPtr wparam = default(IntPtr),
             IntPtr lparam = default(IntPtr),
             int timeoutMilliseconds = -1)
-        {
-            return this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
-        }
+            =>
+            this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
 
         /// <summary>
         /// ウィンドウメッセージをポストする。
@@ -431,10 +412,8 @@ namespace RucheHome.Windows.WinApi
         /// <summary>
         /// 直近の Win32 エラー値を基に例外を送出する。
         /// </summary>
-        private static void ThrowLastErrorException()
-        {
+        private static void ThrowLastErrorException() =>
             Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
-        }
 
         /// <summary>
         /// ウィンドウメッセージを送信する。
@@ -454,9 +433,8 @@ namespace RucheHome.Windows.WinApi
             IntPtr wparam,
             string lparam,
             int timeoutMilliseconds = -1)
-        {
-            return this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
-        }
+            =>
+            this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
 
         /// <summary>
         /// ウィンドウメッセージを送信する。
@@ -473,9 +451,8 @@ namespace RucheHome.Windows.WinApi
             IntPtr wparam,
             StringBuilder lparam,
             int timeoutMilliseconds = -1)
-        {
-            return this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
-        }
+            =>
+            this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
 
         /// <summary>
         /// ウィンドウメッセージ送信の実処理を行う。
