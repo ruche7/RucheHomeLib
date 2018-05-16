@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
+using static RucheHome.Util.ArgumentValidater;
+
 namespace RucheHome.Util
 {
     /// <summary>
@@ -226,46 +228,88 @@ namespace RucheHome.Util
         /// コンストラクタが存在しない場合は例外が送出される。
         /// </remarks>
         protected void ResetDataMembers(params object[] args)
-        {
-            var type = this.GetType();
-            var src =
+            =>
+            this.CopyDataMembersFrom(
                 Activator.CreateInstance(
-                    type,
+                    this.GetType(),
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                     null,
                     args,
-                    null);
+                    null));
+
+        /// <summary>
+        /// DataMemberAttribute 属性の付与されたプロパティおよびフィールドをコピーする。
+        /// </summary>
+        /// <param name="src">コピー元。</param>
+        protected void CopyDataMembersFrom(object src)
+        {
+            ValidateArgumentNull(src, nameof(src));
+            if (!this.GetType().IsAssignableFrom(src.GetType()))
+            {
+                throw new ArgumentException(@"The value is an invalid type.", nameof(src));
+            }
 
             // プロパティ上書き
-            var propInfos =
-                type
-                    .GetProperties(
-                        BindingFlags.Instance |
-                        BindingFlags.Public |
-                        BindingFlags.NonPublic)
-                    .Where(
-                        i =>
-                            i.IsDefined(typeof(DataMemberAttribute)) &&
-                            i.CanRead &&
-                            i.CanWrite);
-            foreach (var pi in propInfos)
+            foreach (var pi in this.GetDataMemberPropertyInfos())
             {
                 pi.SetValue(this, pi.GetValue(src));
             }
 
             // フィールド上書き
-            var fieldInfos =
-                type
-                    .GetFields(
-                        BindingFlags.Instance |
-                        BindingFlags.Public |
-                        BindingFlags.NonPublic)
-                    .Where(i => i.IsDefined(typeof(DataMemberAttribute)));
-            foreach (var fi in fieldInfos)
+            foreach (var fi in this.GetDataMemberFieldInfos())
             {
                 fi.SetValue(this, fi.GetValue(src));
             }
         }
+
+        /// <summary>
+        /// DataMemberAttribute 属性が設定されており、
+        /// かつ読み書き可能なプロパティ群の PropertyInfo 配列を取得する。
+        /// </summary>
+        /// <returns>PropertyInfo 配列。</returns>
+        protected PropertyInfo[] GetDataMemberPropertyInfos()
+        {
+            if (this.dataMemberPropertyInfosCache == null)
+            {
+                this.dataMemberPropertyInfosCache =
+                    this.GetType()
+                        .GetProperties(
+                            BindingFlags.Instance |
+                            BindingFlags.Public |
+                            BindingFlags.NonPublic)
+                        .Where(
+                            i =>
+                                i.IsDefined(typeof(DataMemberAttribute)) &&
+                                i.CanRead &&
+                                i.CanWrite)
+                        .ToArray();
+            }
+
+            return this.dataMemberPropertyInfosCache;
+        }
+        private PropertyInfo[] dataMemberPropertyInfosCache = null;
+
+        /// <summary>
+        /// DataMemberAttribute 属性が設定されているフィールド群の FieldInfo 配列を取得する。
+        /// </summary>
+        /// <returns>FieldInfo 配列。</returns>
+        protected FieldInfo[] GetDataMemberFieldInfos()
+        {
+            if (this.dataMemberFieldInfosCache == null)
+            {
+                this.dataMemberFieldInfosCache =
+                    this.GetType()
+                        .GetFields(
+                            BindingFlags.Instance |
+                            BindingFlags.Public |
+                            BindingFlags.NonPublic)
+                        .Where(i => i.IsDefined(typeof(DataMemberAttribute)))
+                        .ToArray();
+            }
+
+            return this.dataMemberFieldInfosCache;
+        }
+        private FieldInfo[] dataMemberFieldInfosCache = null;
 
         /// <summary>
         /// PropertyChanged イベント伝搬用デリゲートディクショナリ。
