@@ -16,6 +16,11 @@ namespace RucheHome.Net
     /// </summary>
     /// <remarks>
     /// <para>
+    /// 内部で <see cref="WebClient"/> クラスを用いている。
+    /// TLS 1.1/1.2 に対応させたい場合は
+    /// <see cref="ServicePointManager"/> クラスを利用すること。
+    /// </para>
+    /// <para>
     /// アプリ更新情報JSONファイルには、下記の項目を持つオブジェクトを定義すること。
     /// </para>
     /// <list type="table">
