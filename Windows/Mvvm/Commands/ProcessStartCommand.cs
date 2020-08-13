@@ -56,7 +56,7 @@ namespace RucheHome.Windows.Mvvm.Commands
         /// コマンド処理を行う。
         /// </summary>
         /// <param name="parameter">コマンドパラメータ。</param>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        [SuppressMessage("Design", "CA1031")]
         public void Execute(object parameter)
         {
             var fileName = parameter as string;

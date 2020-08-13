@@ -284,7 +284,7 @@ namespace RucheHome.Net
         /// SynchronizationContext プロパティを設定しておくこと。
         /// </para>
         /// </remarks>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        [SuppressMessage("Design", "CA1031")]
         public async Task<bool> Run()
         {
             if (this.IsBusy || Interlocked.Exchange(ref this.runLock, 1) != 0)

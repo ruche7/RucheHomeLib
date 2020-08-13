@@ -20,10 +20,7 @@ namespace RucheHome.Threading
         /// <summary>
         /// デストラクタ。
         /// </summary>
-        ~SemaphoreSlimLock()
-        {
-            this.Dispose(false);
-        }
+        ~SemaphoreSlimLock() => this.Dispose(false);
 
         /// <summary>
         /// 現在同時に許可可能な移行要求数を取得する。
@@ -134,7 +131,13 @@ namespace RucheHome.Threading
         /// <param name="disposing">
         /// Dispose メソッドから呼び出された場合は true 。
         /// </param>
-        protected virtual void Dispose(bool disposing) => this.Semaphore.Dispose();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Semaphore.Dispose();
+            }
+        }
 
         #endregion
 
@@ -155,7 +158,7 @@ namespace RucheHome.Threading
             /// <summary>
             /// SemaphoreSlim インスタンスの Release メソッドを呼び出す。
             /// </summary>
-            [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+            [SuppressMessage("Design", "CA1031")]
             public void Dispose()
             {
                 if (this.Semaphore != null)

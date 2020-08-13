@@ -63,7 +63,7 @@ namespace RucheHome.Util
         /// 設定を読み取る。
         /// </summary>
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        [SuppressMessage("Design", "CA1031")]
         public bool Load()
         {
             // ファイルがなければ読み取れない
@@ -106,7 +106,7 @@ namespace RucheHome.Util
         /// 設定を書き出す。
         /// </summary>
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        [SuppressMessage("Design", "CA1031")]
         public bool Save()
         {
             if (Interlocked.Exchange(ref this.ioLock, 1) != 0)

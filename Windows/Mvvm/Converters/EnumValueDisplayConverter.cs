@@ -24,7 +24,7 @@ namespace RucheHome.Windows.Mvvm.Converters
         /// DisplayAttribute 属性の Name 値による表示文字列。
         /// 定義されていない場合は DependencyProperty.UnsetValue 。
         /// </returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+        [SuppressMessage("Design", "CA1031")]
         public object Convert(
             object value,
             Type targetType,
