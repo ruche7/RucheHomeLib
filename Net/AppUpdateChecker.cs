@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
@@ -283,6 +284,7 @@ namespace RucheHome.Net
         /// SynchronizationContext プロパティを設定しておくこと。
         /// </para>
         /// </remarks>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public async Task<bool> Run()
         {
             if (this.IsBusy || Interlocked.Exchange(ref this.runLock, 1) != 0)
@@ -318,6 +320,10 @@ namespace RucheHome.Net
 
                 // CanUpdate は最後に更新する
                 this.CanUpdate = info.CanUpdate;
+            }
+            catch
+            {
+                return false;
             }
             finally
             {

@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Threading;
@@ -63,6 +63,7 @@ namespace RucheHome.Util
         /// 設定を読み取る。
         /// </summary>
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public bool Load()
         {
             // ファイルがなければ読み取れない
@@ -89,6 +90,10 @@ namespace RucheHome.Util
                     this.Value = (T)value;
                 }
             }
+            catch
+            {
+                return false;
+            }
             finally
             {
                 Interlocked.Exchange(ref this.ioLock, 0);
@@ -101,6 +106,7 @@ namespace RucheHome.Util
         /// 設定を書き出す。
         /// </summary>
         /// <returns>成功したならば true 。失敗したならば false 。</returns>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public bool Save()
         {
             if (Interlocked.Exchange(ref this.ioLock, 1) != 0)
@@ -122,6 +128,10 @@ namespace RucheHome.Util
                 {
                     this.Serializer.WriteObject(stream, this.Value);
                 }
+            }
+            catch
+            {
+                return false;
             }
             finally
             {
