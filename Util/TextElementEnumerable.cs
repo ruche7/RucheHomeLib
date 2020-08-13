@@ -14,10 +14,7 @@ namespace RucheHome.Util
         /// コンストラクタ。
         /// </summary>
         /// <param name="text">対象文字列。</param>
-        public TextElementEnumerable(string text)
-        {
-            this.Text = text;
-        }
+        public TextElementEnumerable(string text) => this.Text = text;
 
         /// <summary>
         /// 対象文字列を取得する。
@@ -42,10 +39,8 @@ namespace RucheHome.Util
 
         #region IEnumerable の明示的実装
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return StringInfo.GetTextElementEnumerator(this.Text);
-        }
+        IEnumerator IEnumerable.GetEnumerator() =>
+            StringInfo.GetTextElementEnumerator(this.Text);
 
         #endregion
     }

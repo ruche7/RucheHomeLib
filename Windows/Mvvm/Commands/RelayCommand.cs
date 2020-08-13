@@ -74,18 +74,10 @@ namespace RucheHome.Windows.Mvvm.Commands
 
         #region ICommand の明示的実装
 
-        bool ICommand.CanExecute(object parameter)
-        {
-            if (parameter is T p)
-            {
-                return this.CanExecute(p);
-            }
-            if (default(T) == null && parameter == null)
-            {
-                return this.CanExecute(default(T));
-            }
-            return false;
-        }
+        bool ICommand.CanExecute(object parameter) =>
+            (parameter is T p) ?
+                this.CanExecute(p) :
+                (default(T) == null && parameter == null && this.CanExecute(default));
 
         void ICommand.Execute(object parameter)
         {
@@ -95,7 +87,7 @@ namespace RucheHome.Windows.Mvvm.Commands
             }
             else if (default(T) == null && parameter == null)
             {
-                this.Execute(default(T));
+                this.Execute(default);
             }
         }
 

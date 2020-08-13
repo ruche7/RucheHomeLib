@@ -253,10 +253,7 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// 自身の型のインスタンスを作成する。
         /// </summary>
         /// <returns>作成されたインスタンス。</returns>
-        protected override Freezable CreateInstanceCore()
-        {
-            return new DragDropCommandBehavior();
-        }
+        protected override Freezable CreateInstanceCore() => new DragDropCommandBehavior();
 
         #endregion
     }

@@ -32,12 +32,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             }
 
             var nv = value as bool?;
-            if (nv.HasValue)
-            {
-                return (bool?)!nv.Value;
-            }
-
-            return DependencyProperty.UnsetValue;
+            return nv.HasValue ? (bool?)!nv.Value : DependencyProperty.UnsetValue;
         }
 
         /// <summary>
@@ -55,8 +50,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type targetType,
             object parameter,
             CultureInfo culture)
-        {
-            return this.Convert(value, targetType, parameter, culture);
-        }
+            =>
+            this.Convert(value, targetType, parameter, culture);
     }
 }

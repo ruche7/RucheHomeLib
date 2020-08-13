@@ -35,7 +35,7 @@ namespace RucheHome.Util
             string baseDirectory = null,
             XmlObjectSerializer serializer = null)
         {
-            this.Value = default(T);
+            this.Value = default;
 
             var dir = new ConfigDirectoryPath(subDirectory, baseDirectory);
             var fileName = typeof(T).FullName + @".config";
@@ -89,10 +89,6 @@ namespace RucheHome.Util
                     this.Value = (T)value;
                 }
             }
-            catch
-            {
-                return false;
-            }
             finally
             {
                 Interlocked.Exchange(ref this.ioLock, 0);
@@ -126,10 +122,6 @@ namespace RucheHome.Util
                 {
                     this.Serializer.WriteObject(stream, this.Value);
                 }
-            }
-            catch
-            {
-                return false;
             }
             finally
             {

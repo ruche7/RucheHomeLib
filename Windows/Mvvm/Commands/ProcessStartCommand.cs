@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 
 namespace RucheHome.Windows.Mvvm.Commands
@@ -55,6 +56,7 @@ namespace RucheHome.Windows.Mvvm.Commands
         /// コマンド処理を行う。
         /// </summary>
         /// <param name="parameter">コマンドパラメータ。</param>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public void Execute(object parameter)
         {
             var fileName = parameter as string;

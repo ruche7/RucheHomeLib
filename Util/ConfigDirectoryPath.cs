@@ -33,7 +33,7 @@ namespace RucheHome.Util
         /// アプリケーション設定を保存するディレクトリのパスを取得する。
         /// </summary>
         public string Value =>
-            (this.SubDirectory == "") ?
+            string.IsNullOrEmpty(this.SubDirectory) ?
                 this.BaseDirectory :
                 Path.Combine(this.BaseDirectory, this.SubDirectory);
 

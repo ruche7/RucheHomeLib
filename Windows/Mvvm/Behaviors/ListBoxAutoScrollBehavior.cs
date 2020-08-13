@@ -34,10 +34,8 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// <summary>
         /// ItemsControl のロード完了時に呼び出される。
         /// </summary>
-        protected override void OnAssociatedObjectLoaded()
-        {
+        protected override void OnAssociatedObjectLoaded() =>
             this.AssociatedObject.SelectionChanged += this.OnSelectionChanged;
-        }
 
         /// <summary>
         /// ビヘイビアをデタッチする直前に呼び出される。
@@ -53,10 +51,7 @@ namespace RucheHome.Windows.Mvvm.Behaviors
         /// 自身の型のインスタンスを作成する。
         /// </summary>
         /// <returns>作成されたインスタンス。</returns>
-        protected override Freezable CreateInstanceCore()
-        {
-            return new ListBoxAutoScrollBehavior();
-        }
+        protected override Freezable CreateInstanceCore() => new ListBoxAutoScrollBehavior();
 
         #endregion
     }

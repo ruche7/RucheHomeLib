@@ -28,9 +28,8 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             Trace.WriteLine(ThreadDebug.MakeMessage(text, member, file, line));
-        }
 
         /// <summary>
         /// 時刻、スレッドID、呼び出し元情報を付けて値と改行をトレース出力する。
@@ -51,9 +50,8 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             WriteLine(value?.ToString(), member, file, line);
-        }
 
         /// <summary>
         /// 時刻、スレッドID、呼び出し元情報を付けて例外情報と改行をトレース出力する。
@@ -78,12 +76,11 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             WriteLine(
                 ThreadDebug.MakeExceptionText(exception, withStackTrace),
                 member,
                 file,
                 line);
-        }
     }
 }

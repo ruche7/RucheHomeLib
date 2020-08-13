@@ -319,10 +319,6 @@ namespace RucheHome.Net
                 // CanUpdate は最後に更新する
                 this.CanUpdate = info.CanUpdate;
             }
-            catch
-            {
-                return false;
-            }
             finally
             {
                 Interlocked.Exchange(ref this.runLock, 0);

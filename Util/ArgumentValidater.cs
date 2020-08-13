@@ -38,8 +38,8 @@ namespace RucheHome.Util
         /// <param name="argName">引数名。例外メッセージに利用される。</param>
         public static void ValidateArgumentOutOfRange<T>(
             T arg,
-            T minValue = default(T),
-            T maxValue = default(T),
+            T minValue = default,
+            T maxValue = default,
             string argName = null)
         {
             var comp = Comparer<T>.Default;

@@ -74,12 +74,10 @@ namespace RucheHome.Windows.Mvvm.Converters
                                 parameter,
                                 culture))
                     .ToList();
-            if (results.Any(r => r == DependencyProperty.UnsetValue))
-            {
-                return DependencyProperty.UnsetValue;
-            }
 
-            return results;
+            return
+                results.Any(r => r == DependencyProperty.UnsetValue) ?
+                    DependencyProperty.UnsetValue : results;
         }
 
         object[] IMultiValueConverter.ConvertBack(
@@ -87,9 +85,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type[] targetTypes,
             object parameter,
             CultureInfo culture)
-        {
-            // 逆変換は非サポート
-            throw new NotImplementedException();
-        }
+            =>
+            throw new NotImplementedException(); // 逆変換は非サポート
     }
 }

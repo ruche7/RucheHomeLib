@@ -57,9 +57,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type[] targetTypes,
             object parameter,
             CultureInfo culture)
-        {
-            // 逆変換は非サポート
-            throw new NotSupportedException();
-        }
+            =>
+            throw new NotSupportedException(); // 逆変換は非サポート
     }
 }

@@ -22,10 +22,7 @@ namespace RucheHome.Windows.WinApi
         /// コンストラクタ。
         /// </summary>
         /// <param name="handle">ウィンドウハンドル。</param>
-        public Win32Window(IntPtr handle)
-        {
-            this.Handle = handle;
-        }
+        public Win32Window(IntPtr handle) => this.Handle = handle;
 
         /// <summary>
         /// ウィンドウハンドルを取得する。
@@ -83,8 +80,7 @@ namespace RucheHome.Windows.WinApi
             {
                 if (!this.processId.HasValue)
                 {
-                    int id = 0;
-                    GetWindowThreadProcessId(this.Handle, out id);
+                    GetWindowThreadProcessId(this.Handle, out int id);
                     this.processId = id;
                 }
 
@@ -107,7 +103,7 @@ namespace RucheHome.Windows.WinApi
             {
                 if (value != this.State)
                 {
-                    int command = 0;
+                    int command;
                     switch (value)
                     {
                     case WindowState.Normal:
@@ -346,12 +342,8 @@ namespace RucheHome.Windows.WinApi
                     new IntPtr(text.Capacity),
                     text,
                     timeout);
-            if (!r.HasValue)
-            {
-                return null;
-            }
 
-            return text.ToString();
+            return r.HasValue ? text.ToString() : null;
         }
 
         /// <summary>
@@ -386,8 +378,8 @@ namespace RucheHome.Windows.WinApi
         /// <returns>結果値。タイムアウトした場合は null 。</returns>
         public IntPtr? SendMessage(
             uint message,
-            IntPtr wparam = default(IntPtr),
-            IntPtr lparam = default(IntPtr),
+            IntPtr wparam = default,
+            IntPtr lparam = default,
             int timeoutMilliseconds = -1)
             =>
             this.SendMessageCore(message, wparam, lparam, timeoutMilliseconds);
@@ -400,8 +392,8 @@ namespace RucheHome.Windows.WinApi
         /// <param name="lparam">パラメータ2。</param>
         public void PostMessage(
             uint message,
-            IntPtr wparam = default(IntPtr),
-            IntPtr lparam = default(IntPtr))
+            IntPtr wparam = default,
+            IntPtr lparam = default)
         {
             if (!PostMessage(this.Handle, message, wparam, lparam))
             {
@@ -562,7 +554,7 @@ namespace RucheHome.Windows.WinApi
             EnumWindowProc enumWindowProc,
             IntPtr lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr FindWindowEx(
             IntPtr parentWindowHandle,
             IntPtr childAfterWindowHandle,
@@ -586,26 +578,23 @@ namespace RucheHome.Windows.WinApi
         [DllImport(
             "user32.dll",
             EntryPoint = "GetWindowLong",
-            CharSet = CharSet.Auto,
+            CharSet = CharSet.Unicode,
             SetLastError = true)]
         private static extern IntPtr GetWindowLong32(IntPtr windowHandle, int index);
 
         [DllImport(
             "user32.dll",
             EntryPoint = "GetWindowLongPtr",
-            CharSet = CharSet.Auto,
+            CharSet = CharSet.Unicode,
             SetLastError = true)]
         private static extern IntPtr GetWindowLongPtr64(IntPtr windowHandle, int index);
 
-        private static IntPtr GetWindowLong(IntPtr windowHandle, int index)
-        {
-            return
-                (IntPtr.Size == 4) ?
-                    GetWindowLong32(windowHandle, index) :
-                    GetWindowLongPtr64(windowHandle, index);
-        }
+        private static IntPtr GetWindowLong(IntPtr windowHandle, int index) =>
+            (IntPtr.Size == 4) ?
+                GetWindowLong32(windowHandle, index) :
+                GetWindowLongPtr64(windowHandle, index);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int GetClassName(
             IntPtr windowHandle,
             [Out] StringBuilder name,
@@ -638,28 +627,28 @@ namespace RucheHome.Windows.WinApi
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool FlashWindowEx(ref FLASHWINFO info);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessage(
             IntPtr windowHandle,
             uint message,
             IntPtr wparam,
             IntPtr lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessage(
             IntPtr windowHandle,
             uint message,
             IntPtr wparam,
             string lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessage(
             IntPtr windowHandle,
             uint message,
             IntPtr wparam,
             [Out] StringBuilder lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessageTimeout(
             IntPtr windowHandle,
             uint message,
@@ -669,7 +658,7 @@ namespace RucheHome.Windows.WinApi
             uint timeout,
             out IntPtr result);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessageTimeout(
             IntPtr windowHandle,
             uint message,
@@ -679,7 +668,7 @@ namespace RucheHome.Windows.WinApi
             uint timeout,
             out IntPtr result);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr SendMessageTimeout(
             IntPtr windowHandle,
             uint message,
@@ -689,7 +678,7 @@ namespace RucheHome.Windows.WinApi
             uint timeout,
             out IntPtr result);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool PostMessage(
             IntPtr windowHandle,

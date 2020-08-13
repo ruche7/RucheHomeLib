@@ -115,8 +115,7 @@ namespace RucheHome.Util
         protected virtual void OnItemPropertyChanged(
             object sender,
             PropertyChangedEventArgs e)
-        {
+            =>
             this.ItemPropertyChanged?.Invoke(sender, e);
-        }
     }
 }

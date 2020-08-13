@@ -26,14 +26,9 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type targetType,
             object parameter,
             CultureInfo culture)
-        {
-            if (value is bool v)
-            {
-                return v ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            return DependencyProperty.UnsetValue;
-        }
+            =>
+            (value is bool v) ?
+                (v ? Visibility.Visible : Visibility.Collapsed) : DependencyProperty.UnsetValue;
 
         /// <summary>
         /// System.Windows.Visibility 値を真偽値に変換する。
@@ -48,13 +43,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type targetType,
             object parameter,
             CultureInfo culture)
-        {
-            if (value is Visibility v)
-            {
-                return (v == Visibility.Visible);
-            }
-
-            return DependencyProperty.UnsetValue;
-        }
+            =>
+            (value is Visibility v) ? (v == Visibility.Visible) : DependencyProperty.UnsetValue;
     }
 }

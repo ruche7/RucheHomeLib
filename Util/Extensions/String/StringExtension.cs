@@ -427,18 +427,12 @@ namespace RucheHome.Util.Extensions.String
             /// そうでもなければ ItemIndex の値が小さいほど優先する。
             /// 上記すべての値が等しければ優先順位は等価と判断する。
             /// </remarks>
-            public int CompareTo(ReplaceItem other)
-            {
-                if (this.SearchResult != other.SearchResult)
-                {
-                    return this.SearchResult.CompareTo(other.SearchResult);
-                }
-                if (this.OldValue.Length != other.OldValue.Length)
-                {
-                    return (other.OldValue.Length - this.OldValue.Length);
-                }
-                return this.ItemIndex.CompareTo(other.ItemIndex);
-            }
+            public int CompareTo(ReplaceItem other) =>
+                (this.SearchResult != other.SearchResult) ?
+                    this.SearchResult.CompareTo(other.SearchResult) :
+                    (this.OldValue.Length != other.OldValue.Length) ?
+                        other.OldValue.Length.CompareTo(this.OldValue.Length) :
+                        this.ItemIndex.CompareTo(other.ItemIndex);
         }
 
         /// <summary>
@@ -495,7 +489,7 @@ namespace RucheHome.Util.Extensions.String
                                     @"置換元文字列列挙内に null が含まれています。",
                                     nameof(oldValues));
                             }
-                            if (v == "")
+                            if (v.Length == 0)
                             {
                                 throw new ArgumentException(
                                     @"置換元文字列列挙内に空文字列が含まれています。",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Windows;
@@ -23,6 +24,7 @@ namespace RucheHome.Windows.Mvvm.Converters
         /// DisplayAttribute 属性の Name 値による表示文字列。
         /// 定義されていない場合は DependencyProperty.UnsetValue 。
         /// </returns>
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
         public object Convert(
             object value,
             Type targetType,
@@ -60,9 +62,7 @@ namespace RucheHome.Windows.Mvvm.Converters
             Type targetType,
             object parameter,
             CultureInfo culture)
-        {
-            // 逆変換は非サポート
-            return DependencyProperty.UnsetValue;
-        }
+            =>
+            DependencyProperty.UnsetValue; // 逆変換は非サポート
     }
 }

@@ -58,11 +58,10 @@ namespace RucheHome.Util
         /// </param>
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            Action invoker =
-                () =>
-                    this.PropertyChanged?.Invoke(
-                        this,
-                        new PropertyChangedEventArgs(propertyName));
+            void invoker() =>
+                this.PropertyChanged?.Invoke(
+                    this,
+                    new PropertyChangedEventArgs(propertyName));
 
             var context = this.SynchronizationContext;
             if (context == null || context == SynchronizationContext.Current)

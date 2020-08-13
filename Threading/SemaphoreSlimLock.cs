@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,10 +14,8 @@ namespace RucheHome.Threading
         /// コンストラクタ。
         /// </summary>
         /// <param name="count">同時に許可する SemaphoreSlim 移行要求数。</param>
-        public SemaphoreSlimLock(int count = 1)
-        {
+        public SemaphoreSlimLock(int count = 1) =>
             this.Semaphore = new SemaphoreSlim(count, count);
-        }
 
         /// <summary>
         /// デストラクタ。
@@ -135,10 +134,7 @@ namespace RucheHome.Threading
         /// <param name="disposing">
         /// Dispose メソッドから呼び出された場合は true 。
         /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            this.Semaphore.Dispose();
-        }
+        protected virtual void Dispose(bool disposing) => this.Semaphore.Dispose();
 
         #endregion
 
@@ -154,14 +150,12 @@ namespace RucheHome.Threading
             /// コンストラクタ。
             /// </summary>
             /// <param name="semaphore">SemaphoreSlim インスタンス。</param>
-            public ReleaseOnDispose(SemaphoreSlim semaphore)
-            {
-                this.Semaphore = semaphore;
-            }
+            public ReleaseOnDispose(SemaphoreSlim semaphore) => this.Semaphore = semaphore;
 
             /// <summary>
             /// SemaphoreSlim インスタンスの Release メソッドを呼び出す。
             /// </summary>
+            [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
             public void Dispose()
             {
                 if (this.Semaphore != null)

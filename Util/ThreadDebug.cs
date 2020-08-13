@@ -31,9 +31,8 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             Debug.WriteLine(MakeMessage(text, member, file, line));
-        }
 
         /// <summary>
         /// 時刻、スレッドID、呼び出し元情報を付けて値と改行をデバッグ出力する。
@@ -54,9 +53,8 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             WriteLine(value?.ToString(), member, file, line);
-        }
 
         /// <summary>
         /// 時刻、スレッドID、呼び出し元情報を付けて例外情報と改行をデバッグ出力する。
@@ -81,13 +79,12 @@ namespace RucheHome.Util
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0)
-        {
+            =>
             WriteLine(
                 MakeExceptionText(exception, withStackTrace),
                 member,
                 file,
                 line);
-        }
 
         /// <summary>
         /// デバッグ出力用メッセージを作成する。
